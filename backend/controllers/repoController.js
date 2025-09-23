@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 const Repository = require("../models/repoModel");
 const User = require("../models/userModel");
-const Issue = require("../models/issueModel");
 
 const createRepository = async (req, res) => {
-  const { owner, name, issues, content, description, visibility } = req.body;
+  const { owner, name, content, description, visibility } = req.body;
   try {
     if (!name) {
       return res.status(400).json({ error: "Repository Name is Required" });
@@ -18,7 +17,6 @@ const createRepository = async (req, res) => {
       content,
       visibility,
       owner,
-      issues,
     });
     const result = await newRepository.save();
     res.status(201).json({
@@ -33,9 +31,7 @@ const createRepository = async (req, res) => {
 
 const getAllRepositories = async (req, res) => {
   try {
-    const repositories = await Repository.find({})
-      .populate("owner")
-      .populate("issues");
+    const repositories = await Repository.find({}).populate("owner");
     res.json(repositories);
   } catch (error) {
     console.error(error);
@@ -46,9 +42,7 @@ const getAllRepositories = async (req, res) => {
 const fetchRepositoryById = async (req, res) => {
   const { id } = req.params;
   try {
-    const repository = await Repository.findById(id)
-      .populate("owner")
-      .populate("issues");
+    const repository = await Repository.findById(id).populate("owner");
     res.json(repository);
   } catch (error) {
     console.error(error);
@@ -59,9 +53,7 @@ const fetchRepositoryById = async (req, res) => {
 const fetchRepositoryByName = async (req, res) => {
   const { name } = req.params;
   try {
-    const repository = await Repository.find({ name })
-      .populate("owner")
-      .populate("issues");
+    const repository = await Repository.find({ name }).populate("owner");
     res.json(repository);
   } catch (error) {
     console.error(error);

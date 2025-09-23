@@ -8,7 +8,6 @@ const RepoSchema = new Schema({
   content: [{ type: String, default: "" }],
   visibility: { type: Boolean },
   owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  issues: [{ type: Schema.Types.ObjectId, ref: "Issue" }],
 });
 
 const Repository = mongoose.model("Repository", RepoSchema);
