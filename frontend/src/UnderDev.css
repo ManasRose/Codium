@@ -1,0 +1,56 @@
+/* ==========================================================================
+   Main Page Container
+   ========================================================================== */
+.under-dev-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: calc(100vh - 70px); /* Full height minus the navbar */
+  color: #c9d1d9;
+  background-color: #0d1117;
+  padding: 24px;
+}
+
+.under-dev-content {
+  max-width: 500px;
+}
+
+/* ==========================================================================
+   Content Styles
+   ========================================================================== */
+.under-dev-icon {
+  font-size: 64px;
+  color: #58a6ff; /* A nice accent blue */
+  margin-bottom: 24px;
+}
+
+.under-dev-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.under-dev-text {
+  font-size: 16px;
+  color: #8b949e;
+  margin-bottom: 32px;
+}
+
+.under-dev-home-btn {
+  display: inline-block;
+  background-color: #21262d;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.under-dev-home-btn:hover {
+  background-color: #30363d;
+  border-color: #8b949e;
+}

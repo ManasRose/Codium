@@ -18,7 +18,7 @@ const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-  // --- New state for search functionality ---
+  // --- State for search functionality ---
   const [searchQuery, setSearchQuery] = useState("");
   const [allRepositories, setAllRepositories] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
@@ -26,11 +26,13 @@ const Navbar = () => {
   const searchWrapperRef = useRef(null);
   const navigate = useNavigate();
 
+  // Retrieve userId inside the component so it's always current
+  const userId = localStorage.getItem("userId");
+
   // --- Fetch all repositories when the component mounts ---
   useEffect(() => {
     const fetchAllRepositories = async () => {
       try {
-        // This endpoint is from your Dashboard.jsx
         const response = await fetch(`http://localhost:5000/repo/all`);
         const data = await response.json();
         setAllRepositories(data);
@@ -73,14 +75,15 @@ const Navbar = () => {
     setSearchQuery("");
     setSearchResults([]);
     setIsSearchFocused(false);
-    // Navigate to the repository page. You will need to create this route.
     navigate(`/repo/${repoId}`);
   };
 
   const userProfilePic = "https://avatars.githubusercontent.com/u/1024025?v=4";
 
   const handleSignOut = () => {
-    console.log("User signed out");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   return (
@@ -101,7 +104,6 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-right">
-          {/* --- Updated Search Bar --- */}
           <div className="search-wrapper" ref={searchWrapperRef}>
             <div className="search-container">
               <FaSearch className="search-icon" />
@@ -140,25 +142,27 @@ const Navbar = () => {
                 </div>
               }
             >
-              <Link to="/new" className="dropdown-item">
+              <Link to="/repo/create" className="dropdown-item">
                 New repository
               </Link>
             </Dropdown>
 
+            {/* --- CORRECTED LINK --- */}
             <div className="tooltip-container" data-tooltip="Your repositories">
-              <button className="navbar-icon-btn">
+              {/* This now points to the correct page route */}
+              <Link to={`/repo/user/${userId}`} className="navbar-icon-btn">
                 <VscRepo size={20} />
-              </button>
+              </Link>
             </div>
             <div className="tooltip-container" data-tooltip="Pull requests">
-              <button className="navbar-icon-btn">
+              <Link to="/pulls" className="navbar-icon-btn">
                 <VscGitPullRequest size={20} />
-              </button>
+              </Link>
             </div>
             <div className="tooltip-container" data-tooltip="Inbox">
-              <button className="navbar-icon-btn">
+              <Link to="/inbox" className="navbar-icon-btn">
                 <VscInbox size={20} />
-              </button>
+              </Link>
             </div>
           </div>
 

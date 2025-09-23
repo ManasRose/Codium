@@ -6,9 +6,13 @@ import Dashboard from "./components/dashboard/Dashboard.jsx";
 import Profile from "./components/user/Profile.jsx";
 import Login from "./components/auth/Login.jsx";
 import Signup from "./components/auth/Signup.jsx";
+import UserRepo from "./components/repo/NewRepo.jsx";
+import NewRepo from "./components/repo/NewRepo.jsx";
+import UnderDev from "./UnderDev.jsx";
 
 //Auth context
-import { useAuth } from "./AuthContext.jsx";
+import { useAuth } from "./authContext.jsx";
+import YourRepo from "./components/repo/YourRepo.jsx";
 
 const ProjectRoutes = () => {
   const { currentUser, setCurrentUser } = useAuth();
@@ -49,6 +53,18 @@ const ProjectRoutes = () => {
     {
       path: "/signup",
       element: <Signup />,
+    },
+    {
+      path: "/repo/user/:userID",
+      element: <YourRepo />,
+    },
+    {
+      path: "/repo/create",
+      element: <NewRepo />,
+    },
+    {
+      path: "*",
+      element: <UnderDev />,
     },
   ]);
   return element;

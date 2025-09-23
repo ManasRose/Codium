@@ -1,0 +1,128 @@
+/* ==========================================================================
+   Main Page Container
+   ========================================================================== */
+.create-repo-container {
+  max-width: 896px;
+  margin: 0 auto;
+  padding: 32px;
+  color: #c9d1d9;
+}
+
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+.create-repo-header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #30363d;
+  margin-bottom: 24px;
+}
+
+.create-repo-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.create-repo-subtitle {
+  font-size: 14px;
+  color: #8b949e;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Form Styles
+   ========================================================================== */
+.create-repo-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #c9d1d9;
+  font-size: 14px;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
+}
+
+.form-divider {
+  border: none;
+  border-top: 1px solid #30363d;
+  margin: 16px 0;
+}
+
+/* Visibility Radio Buttons */
+.visibility-group .radio-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.visibility-group input[type="radio"] {
+  margin-top: 4px;
+}
+
+.visibility-group .radio-option label p {
+  font-size: 12px;
+  color: #8b949e;
+  margin: 4px 0 0 0;
+}
+
+.error-message {
+  color: #f85149;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.create-repo-submit-btn {
+  align-self: flex-start;
+  background-color: #238636;
+  color: white;
+  border: 1px solid rgba(240, 246, 252, 0.1);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.create-repo-submit-btn:hover {
+  background-color: #2ea043;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+@media (max-width: 768px) {
+  .create-repo-container {
+    padding: 16px;
+  }
+}

@@ -1,69 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import HeatMap from "@uiw/react-heat-map";
 
-// Function to generate random activity
+// The main change is here, providing a better color range for a dark theme.
+const panelColors = {
+  0: "#161b22", // Background color
+  4: "#0e4429",
+  8: "#006d32",
+  12: "#26a641",
+  32: "#39d353",
+};
+
+// Dummy data for demonstration purposes
 const generateActivityData = (startDate, endDate) => {
   const data = [];
   let currentDate = new Date(startDate);
   const end = new Date(endDate);
-
   while (currentDate <= end) {
-    const count = Math.floor(Math.random() * 50);
+    const count = Math.floor(Math.random() * 35); // Adjusted max count
     data.push({
-      date: currentDate.toISOString().split("T")[0], //YYY-MM-DD
+      date: currentDate.toISOString().split("T")[0],
       count: count,
     });
     currentDate.setDate(currentDate.getDate() + 1);
   }
-
   return data;
 };
 
-const getPanelColors = (maxCount) => {
-  const colors = {};
-  for (let i = 0; i <= maxCount; i++) {
-    const greenValue = Math.floor((i / maxCount) * 255);
-    colors[i] = `rgb(0, ${greenValue}, 0)`;
-  }
-
-  return colors;
-};
-
 const HeatMapProfile = () => {
-  const [activityData, setActivityData] = useState([]);
-  const [panelColors, setPanelColors] = useState({}); //dummy banaya hai, fetch it from database instead
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const startDate = "2025-01-01";
-      const endDate = "2025-01-31";
-      const data = generateActivityData(startDate, endDate);
-      setActivityData(data);
-
-      const maxCount = Math.max(...data.map((d) => d.count));
-      setPanelColors(getPanelColors(maxCount)); // Adjust the color scale based on max count
-    };
-
-    fetchData();
-  }, []);
+  const activityData = generateActivityData("2025-01-01", "2025-12-31");
 
   return (
-    <div>
-      <h4>Recent Contributions</h4>
-      <HeatMap
-        className="HeatMapProfile"
-        style={{ maxWidth: "1400px", height: "200px", color: "white" }}
-        value={activityData}
-        weekLabels={["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]}
-        startDate={new Date("2025-01-01")}
-        rectSize={15}
-        space={3}
-        rectProps={{
-          rx: 2.5,
-        }}
-        panelColors={panelColors}
-      />
-    </div>
+    <HeatMap
+      value={activityData}
+      width="100%"
+      style={{ color: "#c9d1d9" }}
+      startDate={new Date("2025-01-01")}
+      panelColors={panelColors}
+      rectSize={12}
+      space={3}
+      rectProps={{
+        rx: 3,
+      }}
+    />
   );
 };
 

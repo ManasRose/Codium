@@ -1,0 +1,165 @@
+/* ==========================================================================
+   Main Page Container
+   ========================================================================== */
+.your-repos-container {
+  max-width: 1012px;
+  margin: 0 auto;
+  padding: 32px;
+  color: #c9d1d9;
+  background-color: #0d1117;
+  min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+}
+
+/* ==========================================================================
+   Header and Controls
+   ========================================================================== */
+.your-repos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #30363d;
+}
+
+.your-repos-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.your-repos-new-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #238636;
+  color: white;
+  border: 1px solid rgba(240, 246, 252, 0.1);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.your-repos-new-btn:hover {
+  background-color: #2ea043;
+}
+
+.repo-list-controls {
+  margin-bottom: 16px;
+}
+
+.repo-list-search {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #010409;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #c9d1d9;
+  font-size: 14px;
+}
+
+.repo-list-search:focus {
+  outline: none;
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
+}
+
+/* ==========================================================================
+   Repository List
+   ========================================================================== */
+.repo-list-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.repo-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px 0;
+  border-bottom: 1px solid #30363d;
+}
+
+.repo-item-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.repo-item-icon {
+  color: #8b949e;
+  margin-top: 4px;
+}
+
+.repo-item-details h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.repo-item-link {
+  color: #58a6ff;
+  text-decoration: none;
+}
+
+.repo-item-link:hover {
+  text-decoration: underline;
+}
+
+.repo-item-description {
+  color: #8b949e;
+  font-size: 14px;
+  margin: 4px 0 0;
+}
+
+.repo-item-visibility {
+  border: 1px solid #30363d;
+  color: #8b949e;
+  border-radius: 2em;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Empty state for when no repositories are found */
+.empty-state {
+  text-align: center;
+  padding: 48px;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  margin-top: 24px;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #8b949e;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+@media (max-width: 768px) {
+  .your-repos-container {
+    padding: 16px;
+  }
+
+  .your-repos-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .repo-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
