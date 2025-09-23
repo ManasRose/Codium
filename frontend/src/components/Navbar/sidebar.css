@@ -1,0 +1,166 @@
+/* Main sidebar container */
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+  background-color: #161b22;
+  color: #e6edf3;
+  padding: 16px;
+  border-right: 1px solid #30363d;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  /* Hide the sidebar by default off-screen to the left */
+  transform: translateX(-100%);
+  /* Add a smooth transition for the slide-in/out effect */
+  transition: transform 0.3s ease-in-out;
+}
+
+/* This class is added when the sidebar should be visible */
+.sidebar-container.open {
+  transform: translateX(0);
+}
+
+/* Overlay to dim the background content */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+/* This class is added to show the overlay */
+.sidebar-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #e6edf3;
+  cursor: pointer;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #e6edf3;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.sidebar-link:hover {
+  background-color: #30363d;
+}
+
+.sidebar-divider {
+  border: none;
+  border-top: 1px solid #30363d;
+  margin: 16px 0;
+}
+
+.repos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  margin-bottom: 8px;
+}
+
+.repos-header h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8b949e;
+  margin: 0;
+}
+
+.repo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 12px;
+}
+
+.repo-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  color: #e6edf3;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.repo-link:hover {
+  background-color: #30363d;
+}
+
+.repo-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+/* ==========================================================================
+   New Sidebar Search Styles
+   ========================================================================== */
+
+/* Styles for the search container in the sidebar */
+.sidebar-search-container {
+  display: flex;
+  align-items: center;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 5px 12px;
+  margin: 8px 0;
+}
+
+/* Style for the search icon */
+.sidebar-search-icon {
+  color: #8b949e;
+  margin-right: 8px;
+}
+
+/* Style for the search input field */
+.sidebar-search-input {
+  background: transparent;
+  border: none;
+  color: #e6edf3;
+  width: 100%;
+  font-size: 14px;
+}
+
+.sidebar-search-input:focus {
+  outline: none;
+}
+
+.sidebar-search-input::placeholder {
+  color: #8b949e;
+}

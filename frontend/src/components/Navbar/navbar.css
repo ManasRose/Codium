@@ -1,0 +1,325 @@
+/* ==========================================================================
+   Base Navbar Styles
+   ========================================================================== */
+
+/* Main container for the entire navbar */
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 24px;
+  background-color: #161b22; /* GitHub dark background color */
+  color: #e6edf3; /* Light text color */
+  border-bottom: 1px solid #30363d;
+}
+
+/* Container for the left side items (menu, logo, title) */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Space between items on the left */
+}
+
+/* Container for the right side items (search, icons, profile) */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Space between items on the right */
+}
+
+/* Style for the GitHub logo link */
+.navbar-logo {
+  color: #ffffff; /* Make the logo white */
+}
+
+/* Style for the "Dashboard" text */
+.navbar-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+/* Style for the dashboard link to remove default link styling */
+.navbar-title-link {
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Use the parent's text color */
+}
+
+/* General style for all icon buttons */
+.navbar-icon-btn {
+  background: none;
+  border: 1px solid #30363d;
+  color: #e6edf3;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Remove border from the hamburger menu button to match the image */
+.navbar-left .navbar-icon-btn {
+  border: none;
+}
+
+.navbar-icon-btn:hover {
+  border-color: #8b949e;
+}
+
+/* Style for the combined plus and caret button */
+.plus-caret-btn {
+  display: flex;
+  align-items: center;
+  padding: 5px 8px;
+  gap: 4px;
+}
+
+.plus-caret-btn .plus-icon {
+  margin-right: 4px;
+}
+
+.plus-caret-btn .caret-icon {
+  margin-left: 0;
+}
+
+/* Style for the search bar container */
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 5px 12px;
+  transition: width 0.3s ease-in-out;
+}
+
+/* The search icon within the search bar */
+.search-icon {
+  color: #8b949e;
+  margin-right: 8px;
+}
+
+/* The search input field itself */
+.search-input {
+  background: transparent;
+  border: none;
+  color: #e6edf3;
+  width: 270px; /* Adjust width as needed */
+  font-size: 14px;
+  transition: width 0.3s ease-in-out;
+}
+
+.search-input:focus {
+  outline: none; /* Remove the blue outline on click */
+}
+
+.search-input::placeholder {
+  color: #8b949e;
+}
+
+/* Container for the action icons (+, repo, inbox) */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Smaller gap for this group of icons */
+}
+
+/* Style for the user's circular profile picture */
+.profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Dropdown Menu Styles
+   ========================================================================== */
+
+/* Container to position the dropdown menu relative to its trigger */
+.dropdown-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* The dropdown panel itself */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px); /* Position it below the trigger with a small gap */
+  right: 0;
+  width: 220px;
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  padding: 4px 0;
+  font-size: 14px;
+}
+
+/* Header section in the profile dropdown (e.g., "Signed in as...") */
+.dropdown-header {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: #8b949e;
+}
+
+/* Style for each link or button inside the dropdown */
+.dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 16px;
+  color: #e6edf3;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background-color: #1f6feb; /* GitHub's blue hover color */
+  color: #ffffff;
+}
+
+/* The divider line between sections */
+.dropdown-divider {
+  height: 1px;
+  background-color: #30363d;
+  margin: 4px 0;
+}
+
+/* ==========================================================================
+   Tooltip Styles (Appearing Below)
+   ========================================================================== */
+
+/* Tooltip container to position the prompt */
+.tooltip-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* The tooltip prompt itself (hidden by default) */
+.tooltip-container::after {
+  content: attr(
+    data-tooltip
+  ); /* Pulls text from the 'data-tooltip' attribute */
+  position: absolute;
+  top: calc(100% + 5px); /* Position it 5px below the element */
+  left: 50%;
+
+  /* Styling for the tooltip bubble */
+  background-color: #010409;
+  color: #f0f6fc;
+  white-space: nowrap;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+
+  /* Hide it by default */
+  opacity: 0;
+  transform: translateX(-50%) translateY(-5px); /* Start slightly higher */
+  pointer-events: none; /* Prevents interaction when hidden */
+
+  /* Add a smooth fade and move effect */
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  z-index: 101;
+}
+
+/* Show the tooltip when the container is hovered */
+.tooltip-container:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0); /* Move to final position */
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+   Navbar Search Dropdown Styles
+   ========================================================================== */
+
+/* Wrapper to position the dropdown relative to the search bar */
+.search-wrapper {
+  position: relative;
+}
+
+/* The search results dropdown panel */
+.search-results-dropdown {
+  position: absolute;
+  top: calc(100% + 8px); /* Position below the search bar with a gap */
+  left: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 110; /* Ensure it's above other elements */
+}
+
+/* Individual item in the search results */
+.search-result-item {
+  padding: 10px 16px;
+  color: #e6edf3;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #30363d;
+}
+
+/* Remove border from the last item */
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+/* Hover effect for search items */
+.search-result-item:hover {
+  background-color: #1f6feb;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Responsive Styles
+   ========================================================================== */
+
+/* For tablets and smaller desktops */
+@media (max-width: 1012px) {
+  .navbar-title-link {
+    display: none; /* Hide "Dashboard" text */
+  }
+}
+
+/* For smaller tablets */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 8px 16px; /* Reduce horizontal padding */
+  }
+
+  .search-input {
+    width: 150px; /* Shrink the search bar */
+  }
+
+  /* Hide some of the action icons to save space */
+  .navbar-actions .tooltip-container:nth-child(3),
+  .navbar-actions .tooltip-container:nth-child(4) {
+    display: none;
+  }
+}
+
+/* For mobile phones */
+@media (max-width: 576px) {
+  .search-wrapper {
+    display: none; /* Hide the search bar completely */
+  }
+  .navbar-right {
+    gap: 8px; /* Reduce gap between right-side elements */
+  }
+  /* Hide all action icons on the smallest screens */
+  .navbar-actions {
+    display: none;
+  }
+}
