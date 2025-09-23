@@ -10,6 +10,13 @@ const UserSchema = new Schema({
   ],
   followedUsers: [{ default: [], type: Schema.Types.ObjectId, ref: "User" }],
   starRepos: [{ default: [], type: Schema.Types.ObjectId, ref: "Repository" }],
+
+  description: { type: String, default: "" },
+  profileImage: {
+    type: String,
+    default:
+      "https://res.cloudinary.com/dy9ojg45y/image/upload/v1758641478/profile-default-svgrepo-com_d0eeud.svg",
+  },
 });
 
 const User = mongoose.model("User", UserSchema);

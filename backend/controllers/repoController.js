@@ -133,6 +133,19 @@ const deleteRepositoryById = async (req, res) => {
   }
 };
 
+const getRecentRepositories = async (req, res) => {
+  try {
+    const recentRepos = await Repository.find({ visibility: true })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("owner");
+
+    res.json(recentRepos);
+  } catch (error) {
+    console.error("Error fetching recent repositories:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
 module.exports = {
   createRepository,
   getAllRepositories,
@@ -142,4 +155,5 @@ module.exports = {
   updateRepositoryById,
   toggleVisibilityById,
   deleteRepositoryById,
+  getRecentRepositories,
 };

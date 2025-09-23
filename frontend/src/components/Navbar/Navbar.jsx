@@ -26,8 +26,41 @@ const Navbar = () => {
   const searchWrapperRef = useRef(null);
   const navigate = useNavigate();
 
-  // Retrieve userId inside the component so it's always current
+  // --- State to hold dynamic user data ---
+  const [userProfilePic, setUserProfilePic] = useState(
+    "https://res.cloudinary.com/dy9ojg45y/image/upload/v1758641478/profile-default-svgrepo-com_d0eeud.svg"
+  );
+  // 1. ADDED: New state to hold the username
+  const [username, setUsername] = useState("User");
+
   const userId = localStorage.getItem("userId");
+
+  // --- Fetch user's profile data to get the image URL and username ---
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (userId) {
+        try {
+          const response = await fetch(
+            `http://localhost:5000/userProfile/${userId}`
+          );
+          const userData = await response.json();
+          // Set the profile picture and username from the fetched data
+          if (userData) {
+            if (userData.profileImage) {
+              setUserProfilePic(userData.profileImage);
+            }
+            // 2. ADDED: Set the username from the fetched data
+            if (userData.username) {
+              setUsername(userData.username);
+            }
+          }
+        } catch (err) {
+          console.error("Failed to fetch user profile for navbar:", err);
+        }
+      }
+    };
+    fetchUserProfile();
+  }, [userId]); // This effect runs when the component mounts or userId changes
 
   // --- Fetch all repositories when the component mounts ---
   useEffect(() => {
@@ -78,8 +111,6 @@ const Navbar = () => {
     navigate(`/repo/${repoId}`);
   };
 
-  const userProfilePic = "https://avatars.githubusercontent.com/u/1024025?v=4";
-
   const handleSignOut = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("token");
@@ -90,7 +121,7 @@ const Navbar = () => {
     <>
       <header className="navbar-container">
         <div className="navbar-left">
-          <div className="tooltip-container" data-tooltip="Navigation menu">
+          <div className="tooltip-container" data-tooltip="Menu">
             <button className="navbar-icon-btn" onClick={toggleSidebar}>
               <FaBars size={20} />
             </button>
@@ -147,9 +178,7 @@ const Navbar = () => {
               </Link>
             </Dropdown>
 
-            {/* --- CORRECTED LINK --- */}
             <div className="tooltip-container" data-tooltip="Your repositories">
-              {/* This now points to the correct page route */}
               <Link to={`/repo/user/${userId}`} className="navbar-icon-btn">
                 <VscRepo size={20} />
               </Link>
@@ -168,10 +197,7 @@ const Navbar = () => {
 
           <Dropdown
             trigger={
-              <div
-                className="tooltip-container"
-                data-tooltip="View profile and more"
-              >
+              <div className="tooltip-container" data-tooltip="Profile">
                 <img
                   src={userProfilePic}
                   alt="User Profile"
@@ -180,8 +206,9 @@ const Navbar = () => {
               </div>
             }
           >
+            {/* 3. ADDED: The username is now dynamic */}
             <div className="dropdown-header">
-              Signed in as <strong>ManasRose</strong>
+              Signed in as <strong>{username}</strong>
             </div>
             <div className="dropdown-divider"></div>
             <Link to="/profile" className="dropdown-item">

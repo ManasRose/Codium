@@ -9,9 +9,10 @@ import Signup from "./components/auth/Signup.jsx";
 import UserRepo from "./components/repo/NewRepo.jsx";
 import NewRepo from "./components/repo/NewRepo.jsx";
 import UnderDev from "./UnderDev.jsx";
+import EditUser from "./components/user/EditUser.jsx";
 
 //Auth context
-import { useAuth } from "./authContext.jsx";
+import { useAuth } from "./AuthContext.jsx";
 import YourRepo from "./components/repo/YourRepo.jsx";
 
 const ProjectRoutes = () => {
@@ -61,6 +62,10 @@ const ProjectRoutes = () => {
     {
       path: "/repo/create",
       element: <NewRepo />,
+    },
+    {
+      path: "/updateProfile/:id",
+      element: <EditUser />,
     },
     {
       path: "*",

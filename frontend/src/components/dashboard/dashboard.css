@@ -23,20 +23,13 @@ body {
    Dashboard Layout & Containers
    ========================================================================== */
 
-/* Main container for the 3-column layout */
 .dashboard-container {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr; /* Ratio for left, main, right columns */
+  grid-template-columns: 300px 1fr 300px; /* Fixed sidebars, flexible center */
   gap: 24px;
   padding: 24px;
   max-width: 95%;
   margin: 0 auto;
-}
-
-/* Common styles for both left and right sidebars */
-.dashboard-sidebar {
-  display: flex;
-  flex-direction: column;
 }
 
 .dashboard-sidebar h4 {
@@ -44,24 +37,21 @@ body {
   font-weight: 600;
   margin-top: 0;
   margin-bottom: 12px;
-  color: #e6edf3; /* Brighter heading color */
+  color: #e6edf3;
 }
 
-/* Main content area (activity feed) */
 .dashboard-main h2 {
   font-size: 20px;
   margin-top: 0;
   margin-bottom: 16px;
-  font-weight: 600;
-  border-bottom: 1px solid #30363d;
-  padding-bottom: 8px;
+  font-weight: 400; /* Lighter font weight like GitHub */
+  color: #8b949e;
 }
 
 /* ==========================================================================
-   Sidebar Components (Repo List, Explore)
+   Sidebar Components
    ========================================================================== */
 
-/* Header for the repository list with "New" button */
 .repo-header {
   display: flex;
   justify-content: space-between;
@@ -88,17 +78,15 @@ body {
   background-color: #2ea043;
 }
 
-/* Input field for filtering repositories */
 .repo-filter-input {
   width: 100%;
   padding: 5px 12px;
-  background-color: #0d1117;
+  background-color: #010409;
   border: 1px solid #30363d;
   border-radius: 6px;
   color: #e6edf3;
   font-size: 14px;
   margin-bottom: 16px;
-  box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
 .repo-filter-input:focus {
@@ -107,17 +95,11 @@ body {
   box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
 }
 
-/* List of repositories */
 .repo-list,
 .explore-list {
   list-style: none;
   padding: 0;
   margin: 0;
-}
-
-.repo-list-item,
-.explore-list-item {
-  border-top: 1px solid #21262d;
 }
 
 .repo-list-item a,
@@ -127,36 +109,20 @@ body {
   gap: 8px;
   padding: 8px;
   font-size: 14px;
-  color: #8b949e; /* Dimmer color for repo links */
+  font-weight: 600;
+  color: #c9d1d9;
   text-decoration: none;
   border-radius: 4px;
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.2s;
 }
 
 .repo-list-item a:hover,
 .explore-list-item a:hover {
-  color: #58a6ff; /* GitHub's link blue */
   background-color: #161b22;
 }
 
-.repo-list-item span,
-.explore-list-item span {
-  color: #c9d1d9;
-}
-
-.repo-list-item a:hover span,
-.explore-list-item a:hover span {
-  color: #58a6ff;
-}
-
-.sidebar-divider {
-  border: none;
-  border-top: 1px solid #30363d;
-  margin: 16px 0;
-}
-
 /* ==========================================================================
-   Main Content (Activity Feed)
+   NEW: Main Content (Recent Activity Feed)
    ========================================================================== */
 
 .activity-feed {
@@ -173,42 +139,81 @@ body {
   border-bottom: none;
 }
 
-.feed-item p {
+.feed-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.feed-item-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.feed-item-header p {
   margin: 0;
   font-size: 14px;
+  color: #8b949e;
 }
 
-.feed-item p strong {
+.feed-user-link {
   color: #c9d1d9;
   font-weight: 600;
+  text-decoration: none;
 }
 
-.feed-item-time {
-  font-size: 12px;
+.feed-user-link:hover {
+  color: #58a6ff;
+  text-decoration: underline;
+}
+
+.feed-repo-card {
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 16px;
+  margin-left: 32px; /* Indent the card under the user info */
+}
+
+.feed-repo-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.feed-repo-name a {
+  color: #58a6ff;
+  text-decoration: none;
+}
+.feed-repo-name a:hover {
+  text-decoration: underline;
+}
+
+.feed-repo-description {
+  font-size: 14px;
   color: #8b949e;
-  margin-top: 4px;
-  display: block;
+  margin: 0;
 }
 
 /* ==========================================================================
    Responsive Styles
    ========================================================================== */
 
-/* For tablets and smaller devices */
 @media (max-width: 1012px) {
   .dashboard-container {
-    grid-template-columns: 1fr 2fr; /* Collapse to 2 columns */
+    grid-template-columns: 250px 1fr; /* Collapse to 2 columns */
   }
   .dashboard-sidebar.right {
     display: none; /* Hide the right sidebar */
   }
 }
 
-/* For mobile phones */
 @media (max-width: 768px) {
   .dashboard-container {
     grid-template-columns: 1fr; /* Stack all columns vertically */
     padding: 16px;
-    gap: 32px; /* Increase gap for vertical stacking */
   }
 }

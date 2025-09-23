@@ -91,8 +91,12 @@ function startServer() {
     });
 
   //CORS
-
-  app.use(cors({ origin: "*" }));
+  app.use(
+    cors({
+      origin: "*", // Allows all origins
+      methods: ["GET", "POST", "PUT", "DELETE"], // <-- Explicitly allow PUT
+    })
+  );
 
   app.use(bodyParser.urlencoded({ extended: true }));
 

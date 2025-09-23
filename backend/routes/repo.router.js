@@ -5,6 +5,7 @@ const repoRouter = express.Router();
 
 repoRouter.post("/repo/create", repoController.createRepository);
 repoRouter.get("/repo/all", repoController.getAllRepositories);
+repoRouter.get("/repo/recent", repoController.getRecentRepositories);
 repoRouter.get("/repo/:id", repoController.fetchRepositoryById);
 repoRouter.get("/repo/name/:name", repoController.fetchRepositoryByName);
 repoRouter.get(

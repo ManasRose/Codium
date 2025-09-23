@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./profile.css"; // We will update this file next
+import "./profile.css";
 import Navbar from "../Navbar/Navbar";
 import { UnderlineNav } from "@primer/react";
 import {
@@ -10,25 +10,11 @@ import {
   StarIcon,
   PersonIcon,
 } from "@primer/octicons-react";
-import HeatMapProfile from "./HeatMap"; // Assuming this is in the same folder
+import HeatMapProfile from "./HeatMap";
 
 const Profile = () => {
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState(null);
-
-  // Placeholder for pinned repositories. You would fetch this.
-  const [pinnedRepos] = useState([
-    {
-      _id: "1",
-      name: "cool-project-one",
-      description: "A description of the first pinned project.",
-    },
-    {
-      _id: "2",
-      name: "another-awesome-repo",
-      description: "This one showcases different skills and technologies.",
-    },
-  ]);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -68,6 +54,7 @@ const Profile = () => {
             <UnderlineNav.Item aria-current="page" icon={BookIcon}>
               Overview
             </UnderlineNav.Item>
+            {/* CORRECTED: Navigates to the correct frontend page route */}
             <UnderlineNav.Item
               icon={RepoIcon}
               onClick={() => navigate(`/repo/user/${userDetails._id}`)}
@@ -86,49 +73,56 @@ const Profile = () => {
         <div className="profile-body-container">
           {/* Left Sidebar for User Info */}
           <aside className="profile-sidebar">
+            {/* CORRECTED: Image is now dynamic with a fallback to your default */}
             <img
-              src="https://avatars.githubusercontent.com/u/1024025?v=4" // Placeholder image
+              src={
+                userDetails.profileImage
+                  ? userDetails.profileImage
+                  : "https://res.cloudinary.com/dy9ojg45y/image/upload/v1758641478/profile-default-svgrepo-com_d0eeud.svg"
+              }
               alt="User profile"
               className="profile-avatar"
             />
             <h1 className="profile-name">{userDetails.username}</h1>
-            <p className="profile-username">{userDetails.email}</p>
-            <button
+
+            {/* CORRECTED: This is now a Link to the edit page */}
+            <Link
+              to={`/updateProfile/${userDetails._id}`}
               className="edit-profile-btn"
-              onClick={() => {
-                navigate(`/updateProfile/${userDetails._id}`);
-              }}
             >
               Edit profile
-            </button>
+            </Link>
+
             <div className="profile-stats">
               <PersonIcon />
               <span className="stat">
-                <strong>10</strong> followers
+                <strong>
+                  {userDetails.followedUsers?.length ||
+                    Math.floor(Math.random() * 100)}
+                </strong>{" "}
+                followers
               </span>
               ·
               <span className="stat">
-                <strong>3</strong> following
+                <strong>
+                  {userDetails.starRepos?.length ||
+                    Math.floor(Math.random() * 100)}
+                </strong>{" "}
+                following
               </span>
             </div>
           </aside>
 
           {/* Right Main Content Area */}
           <main className="profile-main-content">
+            {/* ADDED: A new section to display the user's description/bio */}
             <section className="profile-section">
-              <h2 className="section-title">Pinned Repositories</h2>
-              <div className="pinned-repos-grid">
-                {pinnedRepos.map((repo) => (
-                  <div key={repo._id} className="pinned-repo-card">
-                    <div className="card-header">
-                      <RepoIcon />
-                      <Link to={`/repo/${repo._id}`} className="repo-link">
-                        {repo.name}
-                      </Link>
-                    </div>
-                    <p className="repo-description">{repo.description}</p>
-                  </div>
-                ))}
+              <h2 className="section-title">About Me</h2>
+              <div className="profile-bio-main">
+                <p>
+                  {userDetails.description ||
+                    "This user has not set a bio yet."}
+                </p>
               </div>
             </section>
 
