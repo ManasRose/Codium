@@ -31,8 +31,10 @@ const Dashboard = () => {
           `http://localhost:5000/repo/user/${userId}`
         );
         const data = await response.json();
-        setMyRepositories(data.repositories || []);
-        setFilteredMyRepos(data.repositories || []);
+        // --- THIS IS THE FIX ---
+        // The API now returns the array directly, not nested in a 'repositories' object.
+        setMyRepositories(data || []);
+        setFilteredMyRepos(data || []);
       } catch (err) {
         console.error("Error fetching user repositories:", err);
       }
@@ -75,6 +77,31 @@ const Dashboard = () => {
     }
   }, [repoFilter, myRepositories]);
 
+  // Helper function to render repository links
+  const renderRepoLink = (repo) => {
+    const hasCommits = repo.commits && repo.commits.length > 0;
+    const latestCommitId = hasCommits
+      ? repo.commits[repo.commits.length - 1].commitId
+      : null;
+
+    if (hasCommits) {
+      return (
+        <Link to={`/repo/${repo._id}/tree/${latestCommitId}/`}>
+          {repo.visibility ? <VscRepo /> : <VscLock />}
+          <span>{repo.name}</span>
+        </Link>
+      );
+    } else {
+      // If there are no commits, render a non-clickable item
+      return (
+        <div className="repo-link-disabled">
+          {repo.visibility ? <VscRepo /> : <VscLock />}
+          <span>{repo.name}</span>
+        </div>
+      );
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -97,10 +124,7 @@ const Dashboard = () => {
           <ul className="repo-list">
             {filteredMyRepos.map((repo) => (
               <li key={repo._id} className="repo-list-item">
-                <Link to={`/repo/${repo._id}`}>
-                  {repo.visibility ? <VscRepo /> : <VscLock />}
-                  <span>{repo.name}</span>
-                </Link>
+                {renderRepoLink(repo)}
               </li>
             ))}
           </ul>
@@ -113,7 +137,6 @@ const Dashboard = () => {
             {recentRepos.length > 0 ? (
               recentRepos.map(
                 (repo) =>
-                  // --- THIS IS THE CORRECTED PART ---
                   // We check if repo.owner exists before rendering
                   repo.owner && (
                     <div key={repo._id} className="feed-item repo-activity">
@@ -135,8 +158,8 @@ const Dashboard = () => {
                       </div>
                       <div className="feed-repo-card">
                         <div className="feed-repo-name">
-                          <VscRepo />
-                          <Link to={`/repo/${repo._id}`}>{repo.name}</Link>
+                          {/* --- CORRECTED LINK FOR THE ACTIVITY FEED --- */}
+                          {renderRepoLink(repo)}
                         </div>
                         {repo.description && (
                           <p className="feed-repo-description">
@@ -161,6 +184,7 @@ const Dashboard = () => {
           <ul className="explore-list">
             {starredRepos.map((repo) => (
               <li key={repo._id} className="explore-list-item">
+                {/* This link will need to be updated once you build the Star feature */}
                 <Link to={`/repo/${repo._id}`}>
                   <VscStarEmpty />
                   <span>

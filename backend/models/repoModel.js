@@ -9,6 +9,13 @@ const RepoSchema = new Schema(
     content: [{ type: String, default: "" }],
     visibility: { type: Boolean },
     owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    commits: [
+      {
+        commitId: { type: String, required: true },
+        message: { type: String, required: true },
+        timestamp: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );

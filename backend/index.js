@@ -58,8 +58,8 @@ yargs(hideBin(process.argv))
     "Revert to a specific commit",
     (yargs) => {
       yargs.positional("commitID", {
-        describe: "Commit ID to revert to",
-        type: "String",
+        describe: "The full ID of the commit to revert to",
+        type: "string",
       });
     },
     (argv) => {
@@ -99,6 +99,11 @@ function startServer() {
   );
 
   app.use(bodyParser.urlencoded({ extended: true }));
+
+  app.use((req, res, next) => {
+    console.log(`--> Request Received: ${req.method} ${req.originalUrl}`);
+    next();
+  });
 
   //ROUTER
 

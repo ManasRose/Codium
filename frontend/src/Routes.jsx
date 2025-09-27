@@ -10,6 +10,8 @@ import UserRepo from "./components/repo/NewRepo.jsx";
 import NewRepo from "./components/repo/NewRepo.jsx";
 import UnderDev from "./UnderDev.jsx";
 import EditUser from "./components/user/EditUser.jsx";
+import RepoPage from "./components/repo/RepoPage.jsx";
+import FileViewer from "./components/repo/FileViewer.jsx";
 
 //Auth context
 import { useAuth } from "./AuthContext.jsx";
@@ -66,6 +68,14 @@ const ProjectRoutes = () => {
     {
       path: "/updateProfile/:id",
       element: <EditUser />,
+    },
+    {
+      path: "/repo/:repoId/tree/:commitId/*",
+      element: <RepoPage />,
+    },
+    {
+      path: "/repo/:repoId/blob/:commitId/*",
+      element: <FileViewer />,
     },
     {
       path: "*",

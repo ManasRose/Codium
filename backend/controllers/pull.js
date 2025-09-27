@@ -1,35 +1,66 @@
 require("dotenv").config();
 const fs = require("fs").promises;
 const path = require("path");
-const { s3, S3_BUCKET } = require("../config/aws-config");
-pullRepo = async () => {
-  console.log("Pulling commits from S3...");
-  const repoPath = path.join(process.cwd(), ".codiumGit");
+const { s3, S3_BUCKET } = require("../config/aws-config"); // Ensure you have this config file
+
+const pullRepo = async () => {
+  const repoPath = path.resolve(process.cwd(), ".codiumGit");
   const commitsPath = path.join(repoPath, "commits");
+  const configPath = path.join(repoPath, "config.json");
 
   try {
-    const data = await s3
-      .listObjectsV2({ Bucket: S3_BUCKET, Prefix: "commits/" })
-      .promise(); // Ensure the prefix matches your S3 structure and data is entered into data
+    console.log("Reading repository configuration...");
+    // --- Step 1: Read the repository's unique ID from the local config file ---
+    const configData = await fs.readFile(configPath, "utf8");
+    const { repositoryId } = JSON.parse(configData);
 
-    const objects = data.Contents; // List of objects in the bucket
-    for (const object of objects) {
-      const key = object.Key; // contains key which is the name of the file in S3 eg: commits/commitID/filename
-      const commitDir = path.join(
-        commitsPath,
-        path.dirname(key).split("/").pop()
-      ); // Extract commit directory name from key eg: commits/commitID
-      await fs.mkdir(commitDir, { recursive: true }); // Create commit directory
-      const params = {
-        Bucket: S3_BUCKET,
-        Key: key,
-      }; // Parameters to get the object from S3
-      const fileContent = await s3.getObject(params).promise(); // Get the file content from S3
-      await fs.writeFile(path.join(repoPath, key), fileContent.Body); // Write the file content to local file system
+    if (!repositoryId) {
+      throw new Error(
+        "Repository ID not found in config.json. Please run 'init' first."
+      );
     }
-    console.log("All commits pulled from S3 successfully.");
+    console.log(`Pulling commits for repository: ${repositoryId}`);
+
+    // --- Step 2: List objects in S3 for this specific repository ---
+    const params = {
+      Bucket: S3_BUCKET,
+      // The Prefix is crucial to only get files for this repo
+      Prefix: `${repositoryId}/commits/`,
+    };
+    const data = await s3.listObjectsV2(params).promise();
+    console.log(`Found ${data.KeyCount} objects in S3 for this repository.`);
+    if (!data.Contents || data.Contents.length === 0) {
+      console.log("No remote commits found to pull.");
+      return;
+    }
+
+    // --- Step 3: Download each file and place it in the correct local commit folder ---
+    for (const object of data.Contents) {
+      const s3Key = object.Key;
+
+      // Extract the commit ID and filename from the S3 key
+      // e.g., "repoId/commits/commitId/hello.txt" -> "commitId"
+      const keyParts = s3Key.split("/");
+      if (keyParts.length < 4) continue; // Skip the folder itself
+
+      const commitId = keyParts[2];
+      const fileName = keyParts[3];
+
+      const localCommitDir = path.join(commitsPath, commitId);
+      await fs.mkdir(localCommitDir, { recursive: true });
+
+      const downloadParams = {
+        Bucket: S3_BUCKET,
+        Key: s3Key,
+      };
+
+      const fileContent = await s3.getObject(downloadParams).promise();
+      await fs.writeFile(path.join(localCommitDir, fileName), fileContent.Body);
+    }
+
+    console.log("All remote commits pulled from S3 successfully.");
   } catch (err) {
-    console.log("Error in Pulling, ", err);
+    console.error("Error during pull operation:", err.message);
   }
 };
 

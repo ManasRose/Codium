@@ -1,0 +1,29 @@
+.file-viewer-container {
+  max-width: 1012px;
+  margin: 0 auto;
+  padding: 32px;
+}
+.file-viewer-header {
+  font-size: 14px;
+  color: #8b949e;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #30363d;
+}
+.file-viewer-header a {
+  color: #58a6ff;
+  text-decoration: none;
+}
+.file-viewer-header a:hover {
+  text-decoration: underline;
+}
+.file-content-wrapper {
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.file-content-wrapper pre {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  background-color: #1e1e1e !important;
+}

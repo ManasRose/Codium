@@ -1,0 +1,325 @@
+/* General Layout */
+.repo-page-container {
+  max-width: 1280px;
+  margin: 20px auto;
+  padding: 0 24px;
+  color: #c9d1d9;
+}
+
+.repo-page-layout {
+  display: flex;
+  gap: 24px;
+}
+
+.repo-main-content {
+  flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
+}
+
+.repo-sidebar {
+  width: 296px;
+  flex-shrink: 0;
+}
+
+.loading-state {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 1.2rem;
+  color: #8b949e;
+}
+
+/* Header Section */
+.repo-page-header {
+  margin-bottom: 24px;
+}
+
+.repo-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.repo-title {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  gap: 8px;
+  font-weight: 400;
+  margin: 0;
+  color: #58a6ff;
+}
+
+.repo-title .separator {
+  color: #8b949e;
+}
+
+.repo-title .owner-link,
+.repo-title .repo-name-link {
+  color: #58a6ff;
+  text-decoration: none;
+}
+.repo-title .repo-name-link {
+  font-weight: 600;
+}
+.repo-title a:hover {
+  text-decoration: underline;
+}
+
+.repo-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  background-color: #21262d;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* Repo Navigation Tabs */
+.repo-nav-tabs {
+  border-bottom: 1px solid #30363d;
+}
+
+.nav-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  color: #c9d1d9;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.nav-tab.active {
+  font-weight: 600;
+  color: #f0f6fc;
+  border-bottom-color: #f78166;
+}
+.nav-tab:hover {
+  background-color: #161b22;
+  border-radius: 6px 6px 0 0;
+}
+
+/* File Browser */
+.file-browser {
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  margin-bottom: 24px;
+}
+
+.file-browser-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #161b22;
+  border-bottom: 1px solid #30363d;
+  border-radius: 6px 6px 0 0;
+}
+
+.commit-info {
+  flex: 1;
+}
+
+.commit-message {
+  margin: 0;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 400px;
+}
+.commit-meta {
+  font-size: 12px;
+  color: #8b949e;
+  text-align: right;
+}
+.commit-id,
+.commit-time {
+  margin: 0;
+}
+
+/* File List (Table) */
+.file-list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 10px 16px;
+  border-top: 1px solid #21262d;
+  font-size: 14px;
+  align-items: center;
+}
+
+.file-list-row:hover {
+  background-color: #161b22;
+}
+
+.file-list-row.header-row {
+  font-weight: 600;
+  color: #8b949e;
+  background-color: #0d1117;
+}
+.file-list-row.header-row:hover {
+  background-color: #0d1117;
+}
+
+.file-name-col {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-link {
+  color: #c9d1d9;
+  text-decoration: none;
+}
+.file-link:hover {
+  color: #58a6ff;
+  text-decoration: underline;
+}
+
+.file-icon {
+  color: #8b949e;
+  flex-shrink: 0;
+}
+.file-icon.folder {
+  color: #58a6ff;
+}
+
+.file-commit-col {
+  color: #8b949e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-age-col {
+  color: #8b949e;
+  text-align: right;
+}
+.parent-dir {
+  font-weight: bold;
+}
+
+/* README Section */
+.readme-container {
+  border: 1px solid #30363d;
+  border-radius: 6px;
+}
+.readme-container h3 {
+  padding: 12px 16px;
+  background-color: #161b22;
+  border-bottom: 1px solid #30363d;
+  border-radius: 6px 6px 0 0;
+  margin: 0;
+  font-size: 16px;
+}
+.markdown-body {
+  padding: 24px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Styles for rendered markdown content */
+.markdown-body h1,
+.markdown-body h2 {
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 0.3em;
+}
+.markdown-body code {
+  background-color: rgba(110, 118, 129, 0.4);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+.markdown-body pre {
+  background-color: #161b22;
+  padding: 16px;
+  border-radius: 6px;
+  overflow: auto;
+}
+.markdown-body pre code {
+  background-color: transparent;
+  padding: 0;
+}
+.markdown-body blockquote {
+  padding: 0 1em;
+  color: #8b949e;
+  border-left: 0.25em solid #30363d;
+}
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid #30363d;
+  padding: 6px 13px;
+}
+.markdown-body th {
+  font-weight: 600;
+  background-color: #161b22;
+}
+
+/* Sidebar */
+.sidebar-section {
+  margin-bottom: 24px;
+}
+.sidebar-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 8px;
+}
+.repo-description {
+  font-size: 14px;
+  color: #8b949e;
+  margin: 0;
+}
+.stats-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Language Stats Placeholder */
+.language-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.lang-segment {
+  height: 100%;
+}
+.language-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+}
+.language-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}

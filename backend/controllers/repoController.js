@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 const Repository = require("../models/repoModel");
 const User = require("../models/userModel");
+const { s3, S3_BUCKET } = require("../config/aws-config"); // Ensure you have this config file
+const path = require("path"); // Needed for getRepoContents
 
 const createRepository = async (req, res) => {
-  const { owner, name, content, description, visibility } = req.body;
+  const { owner, name, description, visibility } = req.body;
   try {
     if (!name) {
       return res.status(400).json({ error: "Repository Name is Required" });
@@ -14,7 +16,6 @@ const createRepository = async (req, res) => {
     const newRepository = new Repository({
       name,
       description,
-      content,
       visibility,
       owner,
     });
@@ -24,6 +25,11 @@ const createRepository = async (req, res) => {
       repositoryId: result._id,
     });
   } catch (error) {
+    if (error.code === 11000) {
+      return res
+        .status(400)
+        .json({ error: "A repository with this name already exists." });
+    }
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
@@ -53,7 +59,7 @@ const fetchRepositoryById = async (req, res) => {
 const fetchRepositoryByName = async (req, res) => {
   const { name } = req.params;
   try {
-    const repository = await Repository.find({ name }).populate("owner");
+    const repository = await Repository.findOne({ name }).populate("owner");
     res.json(repository);
   } catch (error) {
     console.error(error);
@@ -62,17 +68,13 @@ const fetchRepositoryByName = async (req, res) => {
 };
 
 async function fetchRepositoriesForCurrentUser(req, res) {
-  console.log(req.params);
   const { userID } = req.params;
-
   try {
     const repositories = await Repository.find({ owner: userID });
-
-    if (!repositories || repositories.length == 0) {
+    if (!repositories) {
       return res.status(404).json({ error: "User Repositories not found!" });
     }
-    console.log(repositories);
-    res.json({ message: "Repositories found!", repositories });
+    res.json(repositories);
   } catch (err) {
     console.error("Error during fetching user repositories : ", err.message);
     res.status(500).send("Server error");
@@ -139,13 +141,85 @@ const getRecentRepositories = async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(5)
       .populate("owner");
-
     res.json(recentRepos);
   } catch (error) {
     console.error("Error fetching recent repositories:", error);
     res.status(500).send("Internal Server Error");
   }
 };
+
+const getRepoContents = async (req, res) => {
+  // Parameters are now accessed by index from the RegExp
+  const repoId = req.params[0];
+  const folderPath = req.params[1] || ""; // The folder path is the second capture group
+
+  try {
+    const repository = await Repository.findById(repoId);
+    if (!repository || repository.commits.length === 0) {
+      return res.status(404).json({ error: "Repository or commits not found" });
+    }
+
+    const latestCommitId =
+      repository.commits[repository.commits.length - 1].commitId;
+    const s3Prefix = folderPath
+      ? `${repoId}/commits/${latestCommitId}/${folderPath}/`
+      : `${repoId}/commits/${latestCommitId}/`;
+
+    const params = {
+      Bucket: S3_BUCKET,
+      Prefix: s3Prefix,
+      Delimiter: "/",
+    };
+
+    const s3Data = await s3.listObjectsV2(params).promise();
+
+    const folders = (s3Data.CommonPrefixes || []).map((prefix) => ({
+      name: path.basename(prefix.Prefix),
+      type: "folder",
+      key: prefix.Prefix,
+    }));
+
+    const files = (s3Data.Contents || [])
+      .map((item) => ({
+        name: path.basename(item.Key),
+        type: "file",
+        key: item.Key,
+        size: item.Size,
+      }))
+      .filter((item) => item.name);
+
+    res.json({ repository, contents: [...folders, ...files] });
+  } catch (error) {
+    console.error("Error fetching repository contents:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+const getRepoFileContent = async (req, res) => {
+  // Parameters are now accessed by index from the RegExp
+  const repoId = req.params[0];
+  const commitId = req.params[1];
+  const filePath = req.params[2] || ""; // The file path is the third capture group
+
+  try {
+    const s3Key = `${repoId}/commits/${commitId}/${filePath}`;
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: s3Key,
+    };
+    const s3Object = await s3.getObject(params).promise();
+
+    res.header("Content-Type", "text/plain");
+    res.send(s3Object.Body.toString("utf-8"));
+  } catch (error) {
+    console.error("Error fetching file content from S3:", error);
+    if (error.code === "NoSuchKey") {
+      return res.status(404).send("File not found in this commit.");
+    }
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 module.exports = {
   createRepository,
   getAllRepositories,
@@ -156,4 +230,6 @@ module.exports = {
   toggleVisibilityById,
   deleteRepositoryById,
   getRecentRepositories,
+  getRepoContents,
+  getRepoFileContent,
 };
