@@ -391,6 +391,28 @@ const toggleStarRepo = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+const addCommitToRepo = async (req, res) => {
+  const { repoId } = req.params;
+  const { commitId, message, timestamp } = req.body; // Get commit data from request
+
+  try {
+    const repository = await Repository.findById(repoId);
+    if (!repository) {
+      return res.status(404).json({ error: "Repository not found." });
+    }
+
+    // You could add a check here to ensure req.user.id matches repository.owner
+
+    const newCommit = { commitId, message, timestamp };
+    repository.commits.push(newCommit); // Add the new commit to the array
+    await repository.save(); // Save the updated document
+
+    res.status(200).json({ message: "Commit added successfully.", repository });
+  } catch (error) {
+    console.error("Error adding commit to repo:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 module.exports = {
   createRepository,
@@ -407,4 +429,5 @@ module.exports = {
   uploadFilesToRepo,
   downloadRepoAsZip,
   toggleStarRepo,
+  addCommitToRepo,
 };

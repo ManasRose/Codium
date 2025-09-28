@@ -1,10 +1,13 @@
 {
-  "name": "mainproject",
-  "version": "1.0.0",
+  "name": "@manasrose/codium",
+  "version": "1.1.0",
   "description": "Codium",
   "main": "index.js",
+  "bin": {
+    "codium": "./cli.js"
+  },
   "scripts": {
-    "start": "node index.js start"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +23,9 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "http": "^0.0.1-security",
+    "inquirer": "^12.9.6",
     "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "mongodb": "^6.19.0",
     "mongoose": "^8.18.0",
     "multer": "^2.0.2",

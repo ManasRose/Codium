@@ -9,6 +9,7 @@ import {
   FaSearch,
   FaPlus,
   FaCaretDown,
+  FaNpm,
 } from "react-icons/fa";
 import { VscRepo, VscInbox, VscGitPullRequest } from "react-icons/vsc";
 import Sidebar from "./Sidebar";
@@ -152,6 +153,19 @@ const Navbar = () => {
           <Link to="/" className="navbar-title-link">
             <span className="navbar-title">Dashboard</span>
           </Link>
+        </div>
+
+        {/* --- NEW CENTER SECTION --- */}
+        <div className="navbar-center">
+          <a
+            href="https://www.npmjs.com/package/@manasrose/codium?activeTab=readme"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="navbar-npm-link"
+          >
+            <FaNpm size={24} />
+            <span>View on npm</span>
+          </a>
         </div>
 
         <div className="navbar-right">

@@ -1,89 +1,70 @@
 const fs = require("fs").promises;
 const path = require("path");
-const { v4: uuidv4 } = require("uuid");
-
-// --- ADDED: Mongoose and dotenv for database connection ---
 const mongoose = require("mongoose");
-require("dotenv").config();
-
 const Repository = require("../models/repoModel");
 
-// --- ADDED: A helper function to connect to MongoDB ---
+// --- FIX: Corrected the path to go up only one level ---
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
+// Helper function for the database connection
 const connectDB = async () => {
-  // Don't try to connect if we already have a connection
-  if (mongoose.connection.readyState >= 1) {
-    return;
-  }
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("Database connected for commit operation.");
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("Database connected for script.");
   } catch (err) {
-    console.error("Database connection error for script:", err);
-    process.exit(1); // Exit the script if the database can't be reached
+    console.error("Database connection error for script:", err.message);
+    process.exit(1);
   }
 };
 
 const commitRepo = async (message) => {
-  // --- Step 1: Ensure we have a database connection ---
   await connectDB();
 
   const repoPath = path.resolve(process.cwd(), ".codiumGit");
-  const stagedPath = path.join(repoPath, "staging");
+  const stagingPath = path.join(repoPath, "staging");
   const commitsPath = path.join(repoPath, "commits");
-  const configPath = path.join(repoPath, "config.json");
 
   try {
-    // --- Step 2: Perform local file operations (no changes here) ---
-    const commitID = uuidv4();
-    const commitDir = path.join(commitsPath, commitID);
-    await fs.mkdir(commitDir, { recursive: true });
-
-    const files = await fs.readdir(stagedPath);
-    if (files.length === 0) {
+    const stagedFiles = await fs.readdir(stagingPath);
+    if (stagedFiles.length === 0) {
       console.log("Nothing to commit, staging area is empty.");
+      await mongoose.disconnect();
       return;
     }
 
-    for (const file of files) {
-      await fs.copyFile(
-        path.join(stagedPath, file),
-        path.join(commitDir, file)
-      );
+    const commitId =
+      new Date().toISOString().replace(/[:.]/g, "-") +
+      "-" +
+      Math.random().toString(36).substr(2, 9);
+    const commitDir = path.join(commitsPath, commitId);
+    await fs.mkdir(commitDir);
+
+    for (const file of stagedFiles) {
+      const sourcePath = path.join(stagingPath, file);
+      const destPath = path.join(commitDir, file);
+      await fs.rename(sourcePath, destPath);
     }
 
+    const commitData = {
+      id: commitId,
+      message,
+      timestamp: new Date().toISOString(),
+      files: stagedFiles,
+    };
     await fs.writeFile(
       path.join(commitDir, "commit.json"),
-      JSON.stringify({ message, date: new Date().toISOString() })
+      JSON.stringify(commitData, null, 2)
     );
 
-    console.log(
-      `Commit ${commitID} created locally with message: "${message}"`
-    );
-
-    // --- Step 3: Save commit details to the database (no changes here) ---
-    const configData = await fs.readFile(configPath, "utf8");
-    const { repositoryId } = JSON.parse(configData);
-
-    const repository = await Repository.findById(repositoryId);
-
-    if (repository) {
-      repository.commits.push({
-        commitId: commitID,
-        message: message,
-      });
-      await repository.save();
-      console.log("Commit details successfully saved to the database.");
-    } else {
-      console.error(
-        `Error: Could not find repository with ID ${repositoryId}.`
-      );
-    }
-  } catch (error) {
-    console.error("An error occurred during the commit process:", error);
+    console.log(`Committed ${stagedFiles.length} file(s): ${commitId}`);
+  } catch (err) {
+    console.error("Error during commit:", err.message);
   } finally {
-    // --- Step 4: Close the connection so the script can exit cleanly ---
-    await mongoose.connection.close();
-    console.log("Database connection closed.");
+    await mongoose.disconnect();
+    console.log("Database disconnected.");
   }
 };
 

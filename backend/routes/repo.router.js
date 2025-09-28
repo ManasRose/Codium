@@ -27,7 +27,7 @@ repoRouter.get(
   "/repo/:repoId/commit/:commitId/zip",
   repoController.downloadRepoAsZip
 );
-
+repoRouter.post("/repo/:repoId/commit", repoController.addCommitToRepo);
 repoRouter.get("/repo/name/:name", repoController.fetchRepositoryByName);
 repoRouter.get(
   "/repo/user/:userID",

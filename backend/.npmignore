@@ -1,0 +1,11 @@
+# Local development files and directories
+.codiumGit/
+
+# Environment variables file
+.env
+
+# Node modules (npm usually ignores this, but it's good practice)
+node_modules/
+
+# Log files
+*.log
