@@ -1,6 +1,6 @@
 const express = require("express");
 const userController = require("../controllers/userController");
-const upload = require("../config/muter-config");
+const upload = require("../config/multer-config");
 const userRouter = express.Router();
 
 userRouter.get("/allUsers", userController.getAllUsers);
