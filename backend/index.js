@@ -100,11 +100,6 @@ function startServer() {
 
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  app.use((req, res, next) => {
-    console.log(`--> Request Received: ${req.method} ${req.originalUrl}`);
-    next();
-  });
-
   //ROUTER
 
   app.use("/", mainRouter); //IMPORTANT

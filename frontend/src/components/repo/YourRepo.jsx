@@ -1,118 +1,127 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "./YourRepo.css"; // We will create this file next
-import Navbar from "../Navbar/Navbar"; // Make sure the path is correct
-import { VscRepo, VscLock } from "react-icons/vsc";
-import { FaPlus } from "react-icons/fa";
+import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "../Navbar/Navbar";
+import { VscRepo } from "react-icons/vsc";
+import { formatDistanceToNow } from "date-fns"; // We'll use this for timestamps
+import "./YourRepo.css";
 
 const YourRepo = () => {
   const [repositories, setRepositories] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredRepos, setFilteredRepos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [filter, setFilter] = useState(""); // State for the filter input
+  const { userID } = useParams();
   const navigate = useNavigate();
-  const userId = localStorage.getItem("userId");
 
-  // Fetch the user's repositories when the component loads
-  useEffect(() => {
-    if (!userId) {
-      navigate("/login");
-      return;
+  const handleRepoClick = async (repoId) => {
+    try {
+      const response = await fetch(`/api/repo/${repoId}/contents/`);
+      const data = await response.json();
+      if (
+        response.ok &&
+        data.repository &&
+        data.repository.commits.length > 0
+      ) {
+        const latestCommitId =
+          data.repository.commits[data.repository.commits.length - 1].commitId;
+        navigate(`/repo/${repoId}/tree/${latestCommitId}/`);
+      } else {
+        navigate(`/repo/${repoId}/tree/main/`);
+      }
+    } catch (error) {
+      console.error("Failed to fetch repo details for navigation:", error);
     }
+  };
 
-    const fetchRepositories = async () => {
+  useEffect(() => {
+    const fetchUserRepos = async () => {
+      setIsLoading(true);
       try {
-        const response = await fetch(`/api/repo/user/${userId}`);
-        if (!response.ok) {
-          // Handle cases where the user might not have repositories yet
-          if (response.status === 404) {
-            setRepositories([]);
-            return;
-          }
-          throw new Error("Failed to fetch repositories");
-        }
+        const response = await fetch(`/api/repo/user/${userID}`);
+        if (!response.ok) throw new Error("Failed to fetch repositories");
         const data = await response.json();
-        setRepositories(data.repositories || []);
-      } catch (err) {
-        console.error("Error fetching repositories:", err);
+        setRepositories(data);
+      } catch (error) {
+        console.error("Error fetching user repositories:", error);
+        setRepositories([]);
+      } finally {
+        setIsLoading(false);
       }
     };
+    if (userID) fetchUserRepos();
+  }, [userID]);
 
-    fetchRepositories();
-  }, [userId, navigate]);
-
-  // Filter the repositories list based on the search query
-  useEffect(() => {
-    if (searchQuery === "") {
-      setFilteredRepos(repositories);
-    } else {
-      const filtered = repositories.filter((repo) =>
-        repo.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredRepos(filtered);
-    }
-  }, [searchQuery, repositories]);
+  // Filter repositories based on the input field
+  const filteredRepos = repositories.filter((repo) =>
+    repo.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <>
       <Navbar />
-      <main className="your-repos-container">
-        <header className="your-repos-header">
-          <h2 className="your-repos-title">Your repositories</h2>
-          <Link to="/repo/create" className="your-repos-new-btn">
-            <FaPlus size={12} /> New
-          </Link>
-        </header>
-
-        <div className="repo-list-controls">
-          <input
-            type="text"
-            className="repo-list-search"
-            placeholder="Find a repository..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+      <div className="your-repo-container">
+        <div className="page-header">
+          <h1>Your repositories</h1>
+          <button
+            onClick={() => navigate("/repo/create")}
+            className="new-repo-btn"
+          >
+            New
+          </button>
         </div>
 
-        <div className="repo-list-body">
-          {filteredRepos.length > 0 ? (
-            filteredRepos.map((repo) => (
-              <div key={repo._id} className="repo-list-item">
-                <div className="repo-item-content">
-                  {repo.visibility ? (
-                    <VscRepo className="repo-item-icon" />
-                  ) : (
-                    <VscLock className="repo-item-icon" />
-                  )}
-                  <div className="repo-item-details">
-                    <h3>
-                      <Link to={`/repo/${repo._id}`} className="repo-item-link">
-                        {repo.name}
-                      </Link>
-                    </h3>
-                    {repo.description && (
-                      <p className="repo-item-description">
-                        {repo.description}
-                      </p>
-                    )}
+        <input
+          type="text"
+          placeholder="Find a repository..."
+          className="filter-input"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        />
+
+        <div className="repo-list-container">
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : filteredRepos.length > 0 ? (
+            <ul>
+              {filteredRepos.map((repo) => (
+                <li key={repo._id} className="repo-item">
+                  <div className="repo-info">
+                    <div className="repo-title-line">
+                      <div
+                        onClick={() => handleRepoClick(repo._id)}
+                        className="repo-item-link"
+                      >
+                        <VscRepo />
+                        <span>{repo.name}</span>
+                      </div>
+                      <span
+                        className={`visibility-badge ${
+                          repo.visibility ? "public" : "private"
+                        }`}
+                      >
+                        {repo.visibility ? "Public" : "Private"}
+                      </span>
+                    </div>
+                    <p className="repo-item-description">{repo.description}</p>
                   </div>
-                </div>
-                <span
-                  className={`repo-item-visibility ${
-                    repo.visibility ? "public" : "private"
-                  }`}
-                >
-                  {repo.visibility ? "Public" : "Private"}
-                </span>
-              </div>
-            ))
+                  <div className="repo-meta">
+                    <span>
+                      Updated{" "}
+                      {formatDistanceToNow(new Date(repo.updatedAt), {
+                        addSuffix: true,
+                      })}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
           ) : (
-            <div className="empty-state">
+            <div className="no-repos-found">
               <h3>No repositories found.</h3>
               <p>Get started by creating a new one.</p>
             </div>
           )}
         </div>
-      </main>
+      </div>
     </>
   );
 };

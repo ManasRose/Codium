@@ -30,7 +30,6 @@ const Navbar = () => {
   const [userProfilePic, setUserProfilePic] = useState(
     "https://res.cloudinary.com/dy9ojg45y/image/upload/v1758641478/profile-default-svgrepo-com_d0eeud.svg"
   );
-  // 1. ADDED: New state to hold the username
   const [username, setUsername] = useState("User");
 
   const userId = localStorage.getItem("userId");
@@ -40,14 +39,13 @@ const Navbar = () => {
     const fetchUserProfile = async () => {
       if (userId) {
         try {
+          // Assuming Vite proxy is configured for /api
           const response = await fetch(`/api/userProfile/${userId}`);
           const userData = await response.json();
-          // Set the profile picture and username from the fetched data
           if (userData) {
             if (userData.profileImage) {
               setUserProfilePic(userData.profileImage);
             }
-            // 2. ADDED: Set the username from the fetched data
             if (userData.username) {
               setUsername(userData.username);
             }
@@ -58,7 +56,7 @@ const Navbar = () => {
       }
     };
     fetchUserProfile();
-  }, [userId]); // This effect runs when the component mounts or userId changes
+  }, [userId]);
 
   // --- Fetch all repositories when the component mounts ---
   useEffect(() => {
@@ -102,17 +100,41 @@ const Navbar = () => {
     };
   }, []);
 
-  const handleResultClick = (repoId) => {
+  // --- CORRECTED: Function to handle clicking a search result ---
+  const handleResultClick = async (repoId) => {
     setSearchQuery("");
     setSearchResults([]);
     setIsSearchFocused(false);
-    navigate(`/repo/${repoId}`);
+
+    try {
+      // Fetch repo details to find the latest commit ID
+      const response = await fetch(`/api/repo/${repoId}/contents/`);
+      const data = await response.json();
+
+      if (
+        response.ok &&
+        data.repository &&
+        data.repository.commits.length > 0
+      ) {
+        const latestCommitId =
+          data.repository.commits[data.repository.commits.length - 1].commitId;
+        // Navigate to the full, correct URL for the repo page
+        navigate(`/repo/${repoId}/tree/${latestCommitId}/`);
+      } else {
+        // Fallback for an empty repository with no commits
+        console.warn("Repository has no commits.");
+        // You might want a specific route or UI for empty repos
+        navigate(`/repo/${repoId}/tree/main/`);
+      }
+    } catch (error) {
+      console.error("Failed to fetch latest commit for navigation:", error);
+    }
   };
 
   const handleSignOut = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/auth"); // Navigate to login page
   };
 
   return (
@@ -204,7 +226,6 @@ const Navbar = () => {
               </div>
             }
           >
-            {/* 3. ADDED: The username is now dynamic */}
             <div className="dropdown-header">
               Signed in as <strong>{username}</strong>
             </div>
@@ -212,7 +233,8 @@ const Navbar = () => {
             <Link to="/profile" className="dropdown-item">
               Your profile
             </Link>
-            <Link to="/profile/repositories" className="dropdown-item">
+            {/* --- CORRECTED: This link now points to the correct user repo page --- */}
+            <Link to={`/repo/user/${userId}`} className="dropdown-item">
               Your repositories
             </Link>
             <Link to="/profile/stars" className="dropdown-item">

@@ -9,6 +9,7 @@ const RepoSchema = new Schema(
     content: [{ type: String, default: "" }],
     visibility: { type: Boolean },
     owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    starCount: { type: Number, default: 0 },
     commits: [
       {
         commitId: { type: String, required: true },

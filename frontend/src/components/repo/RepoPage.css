@@ -70,7 +70,45 @@
   display: flex;
   gap: 8px;
 }
+/* Add this to your RepoPage.css file */
+.star-count {
+  background-color: #30363d;
+  border: 1px solid #6e7681;
+  padding: 0px 7px;
+  border-radius: 2em;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  margin-left: 6px;
+}
+/* Add this to the end of your RepoPage.css file */
+.code-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px; /* Space between text and caret icon */
+}
 
+/* This targets the dropdown item within the repo actions header */
+.repo-actions .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between download icon and text */
+}
+
+.empty-repo-container {
+  text-align: center;
+  padding: 48px;
+  border: 1px solid #30363d;
+  border-top: none; /* The header already has a bottom border */
+  border-radius: 0 0 6px 6px;
+  color: #8b949e;
+}
+
+.empty-repo-container h3 {
+  color: #c9d1d9;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
 .action-btn {
   background-color: #21262d;
   border: 1px solid #30363d;

@@ -1,36 +1,51 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
 import Navbar from "../Navbar/Navbar";
 import { VscRepo, VscLock, VscStarEmpty } from "react-icons/vsc";
 import { FaPlus } from "react-icons/fa";
+import { formatDistanceToNow } from "date-fns";
 
 const Dashboard = () => {
-  // State for the left and right columns
   const [myRepositories, setMyRepositories] = useState([]);
   const [filteredMyRepos, setFilteredMyRepos] = useState([]);
   const [repoFilter, setRepoFilter] = useState("");
   const [starredRepos, setStarredRepos] = useState([]);
-
-  // --- NEW: State for the dynamic activity feed ---
   const [recentRepos, setRecentRepos] = useState([]);
 
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
 
+  const handleRepoClick = async (repoId) => {
+    try {
+      const response = await fetch(`/api/repo/${repoId}/contents/`);
+      const data = await response.json();
+      if (
+        response.ok &&
+        data.repository &&
+        data.repository.commits.length > 0
+      ) {
+        const latestCommitId =
+          data.repository.commits[data.repository.commits.length - 1].commitId;
+        navigate(`/repo/${repoId}/tree/${latestCommitId}/`);
+      } else {
+        navigate(`/repo/${repoId}/tree/main/`);
+      }
+    } catch (error) {
+      console.error("Failed to fetch repo details for navigation:", error);
+    }
+  };
+
   useEffect(() => {
     if (!userId) {
-      navigate("/login");
+      navigate("/auth");
       return;
     }
 
-    // Fetch user's own repositories for the left column
     const fetchMyRepositories = async () => {
       try {
         const response = await fetch(`/api/repo/user/${userId}`);
         const data = await response.json();
-        // --- THIS IS THE FIX ---
-        // The API now returns the array directly, not nested in a 'repositories' object.
         setMyRepositories(data || []);
         setFilteredMyRepos(data || []);
       } catch (err) {
@@ -38,7 +53,6 @@ const Dashboard = () => {
       }
     };
 
-    // --- NEW: Fetch recent public repos for the main feed ---
     const fetchRecentRepos = async () => {
       try {
         const response = await fetch(`/api/repo/recent`);
@@ -49,12 +63,14 @@ const Dashboard = () => {
       }
     };
 
-    // Fetch user's starred repositories for the right column
     const fetchStarredRepositories = async () => {
-      // This is still placeholder data. You'll need to build the backend for this.
-      setStarredRepos([
-        { _id: "123", name: "A-Starred-Repo", owner: { username: "creator" } },
-      ]);
+      try {
+        const response = await fetch(`/api/user/${userId}/starred`);
+        const data = await response.json();
+        setStarredRepos(data);
+      } catch (err) {
+        console.error("Error fetching starred repositories:", err);
+      }
     };
 
     fetchMyRepositories();
@@ -62,7 +78,6 @@ const Dashboard = () => {
     fetchStarredRepositories();
   }, [userId, navigate]);
 
-  // Handle filtering of the user's repository list
   useEffect(() => {
     if (repoFilter === "") {
       setFilteredMyRepos(myRepositories);
@@ -75,42 +90,16 @@ const Dashboard = () => {
     }
   }, [repoFilter, myRepositories]);
 
-  // Helper function to render repository links
-  const renderRepoLink = (repo) => {
-    const hasCommits = repo.commits && repo.commits.length > 0;
-    const latestCommitId = hasCommits
-      ? repo.commits[repo.commits.length - 1].commitId
-      : null;
-
-    if (hasCommits) {
-      return (
-        <Link to={`/repo/${repo._id}/tree/${latestCommitId}/`}>
-          {repo.visibility ? <VscRepo /> : <VscLock />}
-          <span>{repo.name}</span>
-        </Link>
-      );
-    } else {
-      // If there are no commits, render a non-clickable item
-      return (
-        <div className="repo-link-disabled">
-          {repo.visibility ? <VscRepo /> : <VscLock />}
-          <span>{repo.name}</span>
-        </div>
-      );
-    }
-  };
-
   return (
     <>
       <Navbar />
       <div className="dashboard-container">
-        {/* Left Column: Your Repositories */}
         <aside className="dashboard-sidebar left">
           <div className="repo-header">
             <h4>Your Repositories</h4>
-            <Link to="/new" className="new-repo-btn">
+            <a href="/repo/create" className="new-repo-btn">
               <FaPlus size={12} /> New
-            </Link>
+            </a>
           </div>
           <input
             type="text"
@@ -121,43 +110,66 @@ const Dashboard = () => {
           />
           <ul className="repo-list">
             {filteredMyRepos.map((repo) => (
-              <li key={repo._id} className="repo-list-item">
-                {renderRepoLink(repo)}
+              <li
+                key={repo._id}
+                className="repo-list-item repo-link"
+                onClick={() => handleRepoClick(repo._id)}
+              >
+                <img
+                  src={
+                    repo.owner?.profileImage ||
+                    "https://res.cloudinary.com/dy9ojg45y/image/upload/v1758641478/profile-default-svgrepo-com_d0eeud.svg"
+                  }
+                  alt={repo.owner?.username}
+                  className="repo-avatar-dashboard"
+                />
+                <span>{repo.name}</span>
               </li>
             ))}
           </ul>
         </aside>
 
-        {/* Center Column: Recent Public Activity */}
         <main className="dashboard-main">
           <h2>Recent Activity</h2>
           <div className="activity-feed">
             {recentRepos.length > 0 ? (
               recentRepos.map(
                 (repo) =>
-                  // We check if repo.owner exists before rendering
                   repo.owner && (
-                    <div key={repo._id} className="feed-item repo-activity">
+                    <div key={repo._id} className="feed-item">
                       <div className="feed-item-header">
-                        <img
-                          src={repo.owner.profileImage}
-                          alt={`${repo.owner.username}'s avatar`}
-                          className="feed-item-avatar"
-                        />
-                        <p>
-                          <Link
-                            to={`/profile/${repo.owner._id}`}
-                            className="feed-user-link"
-                          >
-                            {repo.owner.username}
-                          </Link>{" "}
-                          created a new repository
-                        </p>
+                        <div className="activity-actor">
+                          <img
+                            src={repo.owner.profileImage}
+                            alt={`${repo.owner.username}'s avatar`}
+                            className="feed-item-avatar"
+                          />
+                          <p>
+                            <span className="feed-user-link">
+                              {repo.owner.username}
+                            </span>{" "}
+                            created a new repository
+                          </p>
+                        </div>
+                        {repo.commits && repo.commits.length > 0 && (
+                          <span className="last-commit-time">
+                            Updated{" "}
+                            {formatDistanceToNow(
+                              new Date(
+                                repo.commits[repo.commits.length - 1].timestamp
+                              ),
+                              { addSuffix: true }
+                            )}
+                          </span>
+                        )}
                       </div>
                       <div className="feed-repo-card">
-                        <div className="feed-repo-name">
-                          {/* --- CORRECTED LINK FOR THE ACTIVITY FEED --- */}
-                          {renderRepoLink(repo)}
+                        <div
+                          className="feed-repo-name repo-link"
+                          onClick={() => handleRepoClick(repo._id)}
+                        >
+                          <VscRepo />
+                          <span>{repo.name}</span>
                         </div>
                         {repo.description && (
                           <p className="feed-repo-description">
@@ -176,21 +188,32 @@ const Dashboard = () => {
           </div>
         </main>
 
-        {/* Right Column: Starred Repositories */}
         <aside className="dashboard-sidebar right">
           <h4>Starred Repositories</h4>
           <ul className="explore-list">
-            {starredRepos.map((repo) => (
-              <li key={repo._id} className="explore-list-item">
-                {/* This link will need to be updated once you build the Star feature */}
-                <Link to={`/repo/${repo._id}`}>
-                  <VscStarEmpty />
+            {starredRepos.length > 0 ? (
+              starredRepos.map((repo) => (
+                <li
+                  key={repo._id}
+                  className="explore-list-item repo-link"
+                  onClick={() => handleRepoClick(repo._id)}
+                >
+                  <img
+                    src={
+                      repo.owner?.profileImage ||
+                      "https://res.cloudinary.com/dy9ojg45y/image/upload/v1758641478/profile-default-svgrepo-com_d0eeud.svg"
+                    }
+                    alt={repo.owner?.username}
+                    className="repo-avatar-dashboard"
+                  />
                   <span>
-                    {repo.owner.username}/{repo.name}
+                    {repo.owner?.username} / {repo.name}
                   </span>
-                </Link>
-              </li>
-            ))}
+                </li>
+              ))
+            ) : (
+              <p className="no-starred-repos">No starred repositories yet.</p>
+            )}
           </ul>
         </aside>
       </div>

@@ -5,11 +5,19 @@ const UserSchema = new Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  repositories: [
-    { default: [], type: Schema.Types.ObjectId, ref: "Repository" },
-  ],
-  followedUsers: [{ default: [], type: Schema.Types.ObjectId, ref: "User" }],
-  starRepos: [{ default: [], type: Schema.Types.ObjectId, ref: "Repository" }],
+
+  repositories: {
+    type: [{ type: Schema.Types.ObjectId, ref: "Repository" }],
+    default: [],
+  },
+  followedUsers: {
+    type: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    default: [],
+  },
+  starRepos: {
+    type: [{ type: Schema.Types.ObjectId, ref: "Repository" }],
+    default: [],
+  },
 
   description: { type: String, default: "" },
   profileImage: {
