@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://codium-backend.onrender.com", // Your new live server
+        target: "http://localhost:5000", // Or whatever port your backend runs on
         changeOrigin: true,
       },
     },
