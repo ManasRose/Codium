@@ -34,6 +34,12 @@ mongoose
     console.error("Error connecting to MongoDB:", err);
   });
 
+app.get("/", (req, res) => {
+  res.json({
+    status: "success",
+    message: "Welcome to the Codium API! The server is running.",
+  });
+});
 // --- API Router ---
 // It's good practice to prefix your API routes
 app.use("/api", mainRouter);
