@@ -22,9 +22,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       const fetchUserRepositories = async () => {
         try {
-          const response = await fetch(
-            `http://localhost:5000/repo/user/${userId}`
-          );
+          const response = await fetch(`/api/repo/user/${userId}`);
           const data = await response.json();
           setUserRepositories(data.repositories || []);
         } catch (err) {

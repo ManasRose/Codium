@@ -40,9 +40,7 @@ const Navbar = () => {
     const fetchUserProfile = async () => {
       if (userId) {
         try {
-          const response = await fetch(
-            `http://localhost:5000/userProfile/${userId}`
-          );
+          const response = await fetch(`/api/userProfile/${userId}`);
           const userData = await response.json();
           // Set the profile picture and username from the fetched data
           if (userData) {
@@ -66,7 +64,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchAllRepositories = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/repo/all`);
+        const response = await fetch(`/api/repo/all`);
         const data = await response.json();
         setAllRepositories(data);
       } catch (err) {

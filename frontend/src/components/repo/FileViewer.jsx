@@ -16,7 +16,7 @@ const FileViewer = () => {
     const fetchFileContent = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/repo/${repoId}/commit/${commitId}/file/${filePath}`
+          `/api/repo/${repoId}/commit/${commitId}/file/${filePath}`
         );
 
         // =======================================================

@@ -6,7 +6,6 @@ import Dashboard from "./components/dashboard/Dashboard.jsx";
 import Profile from "./components/user/Profile.jsx";
 import Login from "./components/auth/Login.jsx";
 import Signup from "./components/auth/Signup.jsx";
-import UserRepo from "./components/repo/NewRepo.jsx";
 import NewRepo from "./components/repo/NewRepo.jsx";
 import UnderDev from "./UnderDev.jsx";
 import EditUser from "./components/user/EditUser.jsx";

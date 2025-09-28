@@ -36,7 +36,7 @@ const RepoPage = () => {
       setReadmeContent("");
       try {
         const response = await axios.get(
-          `http://localhost:5000/repo/${repoId}/contents/${currentPath}`
+          `/api/repo/${repoId}/contents/${currentPath}`
         );
         const { repository, contents } = response.data;
         setRepoDetails(repository);
@@ -67,7 +67,7 @@ const RepoPage = () => {
     const fetchReadmeContent = async (readmePath, commitId) => {
       try {
         const readmeResponse = await axios.get(
-          `http://localhost:5000/repo/${repoId}/commit/${commitId}/file/${readmePath}`
+          `/api/repo/${repoId}/commit/${commitId}/file/${readmePath}`
         );
         setReadmeContent(readmeResponse.data);
       } catch (err) {

@@ -23,9 +23,7 @@ const EditProfile = () => {
         return;
       }
       try {
-        const response = await axios.get(
-          `http://localhost:5000/userProfile/${userId}`
-        );
+        const response = await axios.get(`/api/userProfile/${userId}`);
         const userData = response.data;
         setUsername(userData.username || "");
         setDescription(userData.description || "");
@@ -61,15 +59,11 @@ const EditProfile = () => {
     }
 
     try {
-      await axios.put(
-        `http://localhost:5000/updateProfile/${userId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.put(`/api/updateProfile/${userId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       navigate("/profile");
     } catch (err) {
       setError(

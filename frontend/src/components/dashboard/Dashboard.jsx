@@ -27,9 +27,7 @@ const Dashboard = () => {
     // Fetch user's own repositories for the left column
     const fetchMyRepositories = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/repo/user/${userId}`
-        );
+        const response = await fetch(`/api/repo/user/${userId}`);
         const data = await response.json();
         // --- THIS IS THE FIX ---
         // The API now returns the array directly, not nested in a 'repositories' object.
@@ -43,7 +41,7 @@ const Dashboard = () => {
     // --- NEW: Fetch recent public repos for the main feed ---
     const fetchRecentRepos = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/repo/recent`);
+        const response = await fetch(`/api/repo/recent`);
         const data = await response.json();
         setRecentRepos(data);
       } catch (err) {

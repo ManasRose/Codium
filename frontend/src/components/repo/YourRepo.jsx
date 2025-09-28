@@ -21,9 +21,7 @@ const YourRepo = () => {
 
     const fetchRepositories = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/repo/user/${userId}`
-        );
+        const response = await fetch(`/api/repo/user/${userId}`);
         if (!response.ok) {
           // Handle cases where the user might not have repositories yet
           if (response.status === 404) {

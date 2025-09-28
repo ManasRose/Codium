@@ -27,7 +27,7 @@ const NewRepo = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/repo/create", {
+      const response = await fetch("/api/repo/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

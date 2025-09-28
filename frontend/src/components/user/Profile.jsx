@@ -24,9 +24,7 @@ const Profile = () => {
         return;
       }
       try {
-        const response = await axios.get(
-          `http://localhost:5000/userProfile/${userId}`
-        );
+        const response = await axios.get(`/api/userProfile/${userId}`);
         setUserDetails(response.data);
       } catch (err) {
         console.error("Cannot fetch user details: ", err);
