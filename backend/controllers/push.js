@@ -1,13 +1,9 @@
-// --- FIX: Tell dotenv the exact path to your .env file ---
-require("dotenv").config({
-  path: require("path").resolve(__dirname, "../.env"),
-});
-
+// backend/controllers/push.js
 const fs = require("fs").promises;
 const path = require("path");
 const os = require("os");
 const axios = require("axios");
-const { s3, S3_BUCKET } = require("../config/aws-config");
+const FormData = require("form-data"); // Import the new package
 
 // Helper to read the global config for the token
 const readGlobalConfig = async () => {
@@ -29,7 +25,7 @@ const pushRepo = async () => {
     const configData = await fs.readFile(configPath, "utf8");
     const { repositoryId } = JSON.parse(configData);
     const { token } = await readGlobalConfig();
-    const API_BASE_URL = "https://codium-backend.onrender.com/api"; // Using the deployed URL
+    const API_BASE_URL = "https://codium-backend.onrender.com/api";
 
     const commitDirs = await fs.readdir(commitsPath);
     if (commitDirs.length === 0) {
@@ -37,47 +33,45 @@ const pushRepo = async () => {
       return;
     }
 
-    console.log("Uploading files to S3...");
-    for (const commitDir of commitDirs) {
-      const commitPath = path.join(commitsPath, commitDir);
-      const files = await fs.readdir(commitPath);
-      for (const file of files) {
+    const latestCommitId = commitDirs[commitDirs.length - 1];
+    const commitPath = path.join(commitsPath, latestCommitId);
+
+    // 1. Create a form to send files
+    const form = new FormData();
+
+    // 2. Read all files from the latest commit and add them to the form
+    const files = await fs.readdir(commitPath);
+    for (const file of files) {
+      if (file !== "commit.json") {
+        // Don't upload the local commit.json
         const filePath = path.join(commitPath, file);
         const fileContent = await fs.readFile(filePath);
-        const s3Key = `${repositoryId}/commits/${commitDir}/${file}`;
-        const params = { Bucket: S3_BUCKET, Key: s3Key, Body: fileContent };
-        await s3.upload(params).promise();
+        form.append("files", fileContent, file); // Append file with its name
       }
     }
-    console.log("File uploads complete.");
 
-    console.log("Updating database with new commit information...");
-    const latestCommitId = commitDirs[commitDirs.length - 1];
-    const commitJsonPath = path.join(
-      commitsPath,
-      latestCommitId,
-      "commit.json"
-    );
+    // 3. Get the commit message and add it to the form
+    const commitJsonPath = path.join(commitPath, "commit.json");
     const commitJsonData = await fs.readFile(commitJsonPath, "utf8");
-    const { message, timestamp } = JSON.parse(commitJsonData);
+    const { message } = JSON.parse(commitJsonData);
+    form.append("message", message || "Pushed commit");
 
-    const commitPayload = {
-      commitId: latestCommitId,
-      message,
-      timestamp,
-    };
+    console.log("Pushing files to the server...");
 
-    await axios.post(
-      `${API_BASE_URL}/repo/${repositoryId}/commit`,
-      commitPayload,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    // 4. Send the entire form to your existing upload endpoint
+    await axios.post(`${API_BASE_URL}/repo/${repositoryId}/upload`, form, {
+      headers: {
+        ...form.getHeaders(), // Important for multipart/form-data
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     console.log("\n✅ Push successful! Your repository is now up to date.");
   } catch (err) {
-    console.error("\n❌ Error during push operation:", err.message);
+    console.error(
+      "\n❌ Error during push operation:",
+      err.response ? err.response.data : err.message
+    );
   }
 };
 

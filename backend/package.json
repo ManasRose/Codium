@@ -1,6 +1,6 @@
 {
   "name": "@manasrose/codium",
-  "version": "1.1.5",
+  "version": "1.1.7",
   "description": "Codium",
   "main": "index.js",
   "bin": {
@@ -22,6 +22,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "form-data": "^4.0.4",
     "http": "^0.0.1-security",
     "inquirer": "^12.9.6",
     "jsonwebtoken": "^9.0.2",
