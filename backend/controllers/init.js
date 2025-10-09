@@ -38,7 +38,7 @@ const initRepo = async () => {
     const userId = decodedToken.userId;
 
     // --- THIS IS THE CORRECTED URL ---
-    const API_BASE_URL = "http://localhost:5000/api";
+    const API_BASE_URL = "https://codium-backend.onrender.com/api";
 
     console.log("[3/7] Creating local .codiumGit directories...");
     await fs.mkdir(repoPath, { recursive: true });

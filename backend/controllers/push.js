@@ -29,7 +29,7 @@ const pushRepo = async () => {
     const configData = await fs.readFile(configPath, "utf8");
     const { repositoryId } = JSON.parse(configData);
     const { token } = await readGlobalConfig();
-    const API_BASE_URL = "http://localhost:5000/api"; // Make this configurable later
+    const API_BASE_URL = "https://codium-backend.onrender.com/api"; // Make this configurable later
 
     // --- Step 2: Upload all local commits to S3 (your existing logic) ---
     const commitDirs = await fs.readdir(commitsPath);

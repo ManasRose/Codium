@@ -23,7 +23,7 @@ const loginUser = async () => {
       },
     ]);
 
-    const API_BASE_URL = "http://localhost:5000/api";
+    const API_BASE_URL = "https://codium-backend.onrender.com/api";
 
     console.log("Attempting to log in...");
 
