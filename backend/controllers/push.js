@@ -1,11 +1,12 @@
+// --- FIX: Tell dotenv the exact path to your .env file ---
 require("dotenv").config({
   path: require("path").resolve(__dirname, "../.env"),
 });
+
 const fs = require("fs").promises;
 const path = require("path");
 const os = require("os");
-const axios = require("axios"); // You'll need axios
-const { jwtDecode } = require("jwt-decode");
+const axios = require("axios");
 const { s3, S3_BUCKET } = require("../config/aws-config");
 
 // Helper to read the global config for the token
@@ -25,13 +26,11 @@ const pushRepo = async () => {
   const configPath = path.join(repoPath, "config.json");
 
   try {
-    // --- Step 1: Read local config and global auth token ---
     const configData = await fs.readFile(configPath, "utf8");
     const { repositoryId } = JSON.parse(configData);
     const { token } = await readGlobalConfig();
-    const API_BASE_URL = "https://codium-backend.onrender.com/api"; // Make this configurable later
+    const API_BASE_URL = "https://codium-backend.onrender.com/api"; // Using the deployed URL
 
-    // --- Step 2: Upload all local commits to S3 (your existing logic) ---
     const commitDirs = await fs.readdir(commitsPath);
     if (commitDirs.length === 0) {
       console.log("No local commits to push.");
@@ -52,9 +51,8 @@ const pushRepo = async () => {
     }
     console.log("File uploads complete.");
 
-    // --- Step 3: Read commit.json and send metadata to your backend ---
     console.log("Updating database with new commit information...");
-    const latestCommitId = commitDirs[commitDirs.length - 1]; // Assuming last one is latest
+    const latestCommitId = commitDirs[commitDirs.length - 1];
     const commitJsonPath = path.join(
       commitsPath,
       latestCommitId,
