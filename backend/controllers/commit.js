@@ -11,18 +11,20 @@ const commitRepo = async (message) => {
       console.log("Nothing to commit, staging area is empty.");
       return;
     }
-
+    //create unique commit ID using timestamp and random string
     const commitId =
       new Date().toISOString().replace(/[:.]/g, "-") +
       "-" +
       Math.random().toString(36).substr(2, 9);
-    const commitDir = path.join(commitsPath, commitId);
-    await fs.mkdir(commitDir);
 
+    const commitDir = path.join(commitsPath, commitId);
+    await fs.mkdir(commitDir); //create directory for the new commit inside commits
+
+    //move files from staging to the new commit directory
     for (const file of stagedFiles) {
       const sourcePath = path.join(stagingPath, file);
       const destPath = path.join(commitDir, file);
-      await fs.rename(sourcePath, destPath);
+      await fs.rename(sourcePath, destPath); //using rename to move files as it is more efficient than copy + delete
     }
 
     const commitData = {
@@ -32,7 +34,7 @@ const commitRepo = async (message) => {
       files: stagedFiles,
     };
     await fs.writeFile(
-      path.join(commitDir, "commit.json"),
+      path.join(commitDir, "commit.json"), //store commit metadata in the commit directory
       JSON.stringify(commitData, null, 2)
     );
 

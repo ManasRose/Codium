@@ -1,5 +1,3 @@
-// backend/controllers/login.js
-
 const inquirer = require("inquirer");
 const axios = require("axios");
 const fs = require("fs").promises;
@@ -10,7 +8,6 @@ const loginUser = async () => {
   try {
     // 1. Prompt the user for their credentials
     const credentials = await inquirer.default.prompt([
-      // <-- THIS IS THE ONLY CHANGE
       {
         name: "username",
         message: "Enter your username:",
@@ -39,10 +36,10 @@ const loginUser = async () => {
     }
 
     // 3. Save the token to a global config file in the user's home directory
-    const configPath = path.join(os.homedir(), ".codiumrc");
+    const configPath = path.join(os.homedir(), ".codiumrc"); //rc is just standard naming convention for cli config files
     const configData = { token };
 
-    await fs.writeFile(configPath, JSON.stringify(configData, null, 2));
+    await fs.writeFile(configPath, JSON.stringify(configData, null, 2)); //save the token into the .codiumrc file in JSON format
 
     console.log("\n✅ Successfully logged in!");
     console.log(`Authentication token saved to ${configPath}`);

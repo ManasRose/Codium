@@ -1,9 +1,8 @@
-// backend/controllers/push.js
 const fs = require("fs").promises;
 const path = require("path");
 const os = require("os");
 const axios = require("axios");
-const FormData = require("form-data"); // Import the new package
+const FormData = require("form-data"); //specialized library to handle file uploads
 
 // Helper to read the global config for the token
 const readGlobalConfig = async () => {
@@ -46,7 +45,7 @@ const pushRepo = async () => {
         // Don't upload the local commit.json
         const filePath = path.join(commitPath, file);
         const fileContent = await fs.readFile(filePath);
-        form.append("files", fileContent, file); // Append file with its name
+        +-9 / form.append("files", fileContent, file); // Append file with its name
       }
     }
 
@@ -55,8 +54,6 @@ const pushRepo = async () => {
     const commitJsonData = await fs.readFile(commitJsonPath, "utf8");
     const { message } = JSON.parse(commitJsonData);
     form.append("message", message || "Pushed commit");
-
-    console.log("Pushing files to the server...");
 
     // 4. Send the entire form to your existing upload endpoint
     await axios.post(`${API_BASE_URL}/repo/${repositoryId}/upload`, form, {

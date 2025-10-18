@@ -1,11 +1,10 @@
-// backend/controllers/init.js
-
 const fs = require("fs").promises;
 const path = require("path");
 const axios = require("axios");
 const os = require("os");
 const { jwtDecode } = require("jwt-decode");
 
+//function to check if logged in
 const readGlobalConfig = async () => {
   const configPath = path.join(os.homedir(), ".codiumrc");
   try {
@@ -17,63 +16,49 @@ const readGlobalConfig = async () => {
 };
 
 const initRepo = async () => {
-  const repoPath = path.resolve(process.cwd(), ".codiumGit");
-  console.log(`[1/7] Set repository path to: ${repoPath}`);
+  const repoPath = path.resolve(process.cwd(), ".codiumGit"); //path for the local repository's hidden directory
 
+  //check if already initialized
   try {
-    await fs.access(repoPath);
-    console.log(
-      "-> This directory is already a CodiumGit repository. Exiting."
-    );
+    await fs.access(repoPath); // Check if .codiumGit directory already exists
+    console.log("-> This directory is already a CodiumGit repository.");
     return;
   } catch (error) {
-    console.log(
-      "-> No existing repository found. Proceeding with initialization."
-    );
+    // Directory does not exist, continue with initialization
   }
 
   try {
-    const { token } = await readGlobalConfig();
-    const decodedToken = jwtDecode(token);
+    const { token } = await readGlobalConfig(); // Read the global config to get the token
+    const decodedToken = jwtDecode(token); //A JWT is not encrypted, just encoded
     const userId = decodedToken.userId;
 
-    // --- THIS IS THE CORRECTED URL ---
     const API_BASE_URL = "https://codium-backend.onrender.com/api";
 
-    console.log("[3/7] Creating local .codiumGit directories...");
     await fs.mkdir(repoPath, { recursive: true });
     await fs.mkdir(path.join(repoPath, "staging"), { recursive: true });
     await fs.mkdir(path.join(repoPath, "commits"), { recursive: true });
-    console.log("-> Local directories created successfully.");
 
     const repoDetails = {
-      name: path.basename(process.cwd()),
-      description: "Initialized from the command line",
+      name: path.basename(process.cwd()), // Use current directory name as repo name
+      description: "",
       visibility: true,
       owner: userId,
     };
-    console.log("[4/7] Preparing repository data for backend:", repoDetails);
 
-    console.log(
-      "[5/7] Sending request to create repository in the database..."
-    );
+    //create repo in the backend
     const response = await axios.post(
-      `${API_BASE_URL}/repo/create`, // The path is now correct
+      `${API_BASE_URL}/repo/create`,
       repoDetails
     );
-    console.log("-> Backend response received successfully.");
 
-    const { repositoryId } = response.data;
-    console.log(`[6/7] Retrieved repositoryId from backend: ${repositoryId}`);
+    const { repositoryId } = response.data; //get repositoryId from backend
 
-    const config = { repositoryId };
-    console.log("[7/7] Writing repositoryId to local config.json file...");
+    const config = { repositoryId }; //local config for the repo
     await fs.writeFile(
       path.join(repoPath, "config.json"),
       JSON.stringify(config, null, 2)
     );
 
-    console.log("\n--- SUCCESS ---");
     console.log(`Initialized empty CodiumGit repository in ${repoPath}`);
   } catch (err) {
     console.error("\n--- ERROR ---");
