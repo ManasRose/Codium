@@ -31,7 +31,10 @@ const Login = () => {
           : { username: emailOrUsername }),
       };
 
-      const res = await axios.post("/api/login", requestBody);
+      const res = await axios.post(
+        "https://codium-backend.onrender.com/api/login",
+        requestBody
+      );
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.userId);

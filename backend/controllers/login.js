@@ -38,7 +38,7 @@ const loginUser = async () => {
     // 3. Send credentials to your backend's login endpoint
     const response = await axios.post(`${API_BASE_URL}/login`, loginPayload);
 
-    const { token } = response.data;
+    const { token, userId } = response.data;
 
     if (!token) {
       throw new Error("Login failed, no token received.");
@@ -46,7 +46,7 @@ const loginUser = async () => {
 
     // 4. Save the token to a global config file in the user's home directory
     const configPath = path.join(os.homedir(), ".codiumrc");
-    const configData = { token };
+    const configData = { token, userId };
 
     // Save the token into the .codiumrc file in JSON format
     await fs.writeFile(configPath, JSON.stringify(configData, null, 2));
