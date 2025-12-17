@@ -19,16 +19,11 @@ const FileViewer = () => {
           `/api/repo/${repoId}/commit/${commitId}/file/${filePath}`
         );
 
-        // =======================================================
-        // ==================== THIS PART IS NEW ===================
-        // =======================================================
         let content = response.data;
-        // If the data is a JSON object, convert it to a formatted string
         if (typeof content === "object" && content !== null) {
-          content = JSON.stringify(content, null, 2); // 2 spaces for indentation
+          content = JSON.stringify(content, null, 2);
         }
         setFileContent(content);
-        // =======================================================
       } catch (err) {
         console.error("Error fetching file content:", err);
         setFileContent("Error: Could not load file content.");
@@ -70,7 +65,7 @@ const FileViewer = () => {
             wrapLines={true} // Good for long lines
             wrapLongLines={true} // Good for long lines
           >
-            {String(fileContent)} {/* Cast to string for safety */}
+            {String(fileContent)}
           </SyntaxHighlighter>
         </div>
       </main>

@@ -5,7 +5,7 @@ import { formatDistanceToNow } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { FaCaretDown } from "react-icons/fa";
+import { FaCaretDown, FaPlus } from "react-icons/fa"; // Added FaPlus
 import Dropdown from "../Navbar/Dropdown";
 import { VscCloudDownload } from "react-icons/vsc";
 
@@ -40,8 +40,12 @@ const RepoPage = () => {
   const [isStarred, setIsStarred] = useState(false);
   const [starCount, setStarCount] = useState(0);
 
+  // New state to toggle upload view
+  const [isUploading, setIsUploading] = useState(false);
+
   const refreshRepoContents = () => {
-    navigate(0);
+    setIsUploading(false); // Close upload view after success
+    navigate(0); // Refresh page
   };
 
   useEffect(() => {
@@ -153,6 +157,23 @@ const RepoPage = () => {
               </Link>
             </h2>
             <div className="repo-actions">
+              {/* --- NEW ADD FILE DROPDOWN --- */}
+              <Dropdown
+                trigger={
+                  <button className="action-btn">
+                    <FaPlus /> Add file <FaCaretDown />
+                  </button>
+                }
+              >
+                <button
+                  className="dropdown-item"
+                  onClick={() => setIsUploading(true)}
+                >
+                  Upload files
+                </button>
+              </Dropdown>
+              {/* ----------------------------- */}
+
               {latestCommit && (
                 <Dropdown
                   trigger={
@@ -195,121 +216,149 @@ const RepoPage = () => {
 
         <div className="repo-page-layout">
           <main className="repo-main-content">
-            <div className="file-browser">
-              <div className="file-browser-header">
-                <div className="commit-info">
-                  <strong>{repoDetails.owner.username}</strong>
-                  <p className="commit-message">{latestCommit?.message}</p>
+            {/* --- CONDITIONAL UPLOAD VIEW --- */}
+            {isUploading ? (
+              <div className="upload-container-wrapper">
+                <div className="upload-header">
+                  <h3>Upload files</h3>
+                  <button
+                    onClick={() => setIsUploading(false)}
+                    className="cancel-upload-btn"
+                  >
+                    Cancel
+                  </button>
                 </div>
-                <div className="commit-meta">
-                  {latestCommit && (
-                    <>
-                      <p className="commit-id">Latest commit:</p>
-                      <p className="commit-time">
-                        {formatDistanceToNow(new Date(latestCommit.timestamp))}{" "}
-                        ago
-                      </p>
-                    </>
-                  )}
-                </div>
+                <FileUpload
+                  repoId={repoId}
+                  onUploadComplete={refreshRepoContents}
+                />
               </div>
-
-              <div className="file-list">
-                <div className="file-list-row header-row">
-                  <div className="file-name-col">{repoDetails.name}</div>
-                  <div className="file-commit-col">
-                    {repoDetails.description}
-                  </div>
-                  <div className="file-age-col">
-                    {formatDistanceToNow(new Date(repoDetails.createdAt))} ago
-                  </div>
-                </div>
-
-                {contents.length > 0 && latestCommit ? (
-                  <>
-                    {currentPath && (
-                      <div className="file-list-row">
-                        <div className="file-name-col">
-                          <Link
-                            to={`/repo/${repoId}/tree/${
-                              latestCommit.commitId
-                            }/${currentPath.substring(
-                              0,
-                              currentPath.lastIndexOf("/")
-                            )}`}
-                            className="file-link parent-dir"
-                          >
-                            ..
-                          </Link>
-                        </div>
-                      </div>
-                    )}
-                    {contents.map((item) => {
-                      const commitPrefix = `${repoId}/commits/${latestCommit.commitId}/`;
-                      const relativePath = item.key.replace(commitPrefix, "");
-                      return (
-                        <div key={item.key} className="file-list-row">
-                          <div className="file-name-col">
-                            {item.type === "folder" ? (
-                              <>
-                                <VscFolder className="file-icon folder" />
-                                <Link
-                                  to={`/repo/${repoId}/tree/${latestCommit.commitId}/${relativePath}`}
-                                  className="file-link"
-                                >
-                                  {item.name}
-                                </Link>
-                              </>
-                            ) : (
-                              <>
-                                <VscFile className="file-icon" />
-                                <Link
-                                  to={`/repo/${repoId}/blob/${latestCommit.commitId}/${relativePath}`}
-                                  className="file-link"
-                                >
-                                  {item.name}
-                                </Link>
-                              </>
-                            )}
-                          </div>
-                          <div className="file-commit-col">
-                            {latestCommit?.message}
-                          </div>
-                          <div className="file-age-col">
+            ) : (
+              // --- NORMAL FILE BROWSER VIEW ---
+              <>
+                <div className="file-browser">
+                  <div className="file-browser-header">
+                    <div className="commit-info">
+                      <strong>{repoDetails.owner.username}</strong>
+                      <p className="commit-message">{latestCommit?.message}</p>
+                    </div>
+                    <div className="commit-meta">
+                      {latestCommit && (
+                        <>
+                          <p className="commit-id">Latest commit:</p>
+                          <p className="commit-time">
                             {formatDistanceToNow(
                               new Date(latestCommit.timestamp)
                             )}{" "}
                             ago
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="file-list">
+                    <div className="file-list-row header-row">
+                      <div className="file-name-col">{repoDetails.name}</div>
+                      <div className="file-commit-col">
+                        {repoDetails.description}
+                      </div>
+                      <div className="file-age-col">
+                        {formatDistanceToNow(new Date(repoDetails.createdAt))}{" "}
+                        ago
+                      </div>
+                    </div>
+
+                    {contents.length > 0 && latestCommit ? (
+                      <>
+                        {currentPath && (
+                          <div className="file-list-row">
+                            <div className="file-name-col">
+                              <Link
+                                to={`/repo/${repoId}/tree/${
+                                  latestCommit.commitId
+                                }/${currentPath.substring(
+                                  0,
+                                  currentPath.lastIndexOf("/")
+                                )}`}
+                                className="file-link parent-dir"
+                              >
+                                ..
+                              </Link>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </>
-                ) : (
-                  <div className="empty-repo-container">
-                    <h3>This repository is empty.</h3>
-                    {!currentPath ? (
-                      <FileUpload
-                        repoId={repoId}
-                        onUploadComplete={refreshRepoContents}
-                      />
+                        )}
+                        {contents.map((item) => {
+                          const commitPrefix = `${repoId}/commits/${latestCommit.commitId}/`;
+                          const relativePath = item.key.replace(
+                            commitPrefix,
+                            ""
+                          );
+                          return (
+                            <div key={item.key} className="file-list-row">
+                              <div className="file-name-col">
+                                {item.type === "folder" ? (
+                                  <>
+                                    <VscFolder className="file-icon folder" />
+                                    <Link
+                                      to={`/repo/${repoId}/tree/${latestCommit.commitId}/${relativePath}`}
+                                      className="file-link"
+                                    >
+                                      {item.name}
+                                    </Link>
+                                  </>
+                                ) : (
+                                  <>
+                                    <VscFile className="file-icon" />
+                                    <Link
+                                      to={`/repo/${repoId}/blob/${latestCommit.commitId}/${relativePath}`}
+                                      className="file-link"
+                                    >
+                                      {item.name}
+                                    </Link>
+                                  </>
+                                )}
+                              </div>
+                              <div className="file-commit-col">
+                                {latestCommit?.message}
+                              </div>
+                              <div className="file-age-col">
+                                {formatDistanceToNow(
+                                  new Date(latestCommit.timestamp)
+                                )}{" "}
+                                ago
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </>
                     ) : (
-                      <p>This folder is empty.</p>
+                      <div className="empty-repo-container">
+                        <h3>This repository is empty.</h3>
+                        {!currentPath ? (
+                          <FileUpload
+                            repoId={repoId}
+                            onUploadComplete={refreshRepoContents}
+                          />
+                        ) : (
+                          <p>This folder is empty.</p>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
 
-            {readmeContent && (
-              <div className="readme-container">
-                <h3>README.md</h3>
-                <article className="markdown-body">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {readmeContent}
-                  </ReactMarkdown>
-                </article>
-              </div>
+                {readmeContent && (
+                  <div className="readme-container">
+                    <h3>README.md</h3>
+                    <article className="markdown-body">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {readmeContent}
+                      </ReactMarkdown>
+                    </article>
+                  </div>
+                )}
+              </>
             )}
           </main>
 
