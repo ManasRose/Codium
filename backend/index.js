@@ -11,10 +11,30 @@ dotenv.config({ quiet: true });
 const app = express();
 const port = process.env.PORT || 5000; // A standard port for APIs
 
+const allowedOrigins = [
+  "http://localhost:5173", // For local development
+  "https://main.d293vwejwkqvcf.amplifyapp.com",
+  // You can add more URLs here if needed
+];
+
 // Middleware
 app.use(
-  cors({ origin: "*", methods: ["GET", "POST", "PUT", "PATCH", "DELETE"] })
-); // Enable CORS for all origins and specified methods
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
@@ -36,13 +56,12 @@ const server = app.listen(port, () => {
 // Attach new Socket.IO server to the existing Express server
 const io = new Server(server, {
   cors: {
-    // allow WebSocket connections from any origin
-    origin: "*",
+    origin: allowedOrigins, // Reuse the same allowed origins list
     methods: ["GET", "POST"],
+    credentials: true,
   },
-}); // This part adds real-time, two-way communication capabilities on top of the existing Express server.
+});
 
-//Socket.IO logic
 io.on("connection", (socket) => {
   socket.on("join room", (userID) => {
     console.log(`User ${userID} joined their socket room.`);
