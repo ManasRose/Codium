@@ -45,6 +45,10 @@ mongoose.connect(mongoURI).catch((err) => {
   console.error("Error connecting to MongoDB:", err);
 });
 
+app.get("/", (req, res) => {
+  res.send("Codium Backend is Running!");
+});
+
 // API Router
 app.use("/api", mainRouter);
 
