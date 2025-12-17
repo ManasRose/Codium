@@ -27,18 +27,21 @@ const NewRepo = () => {
     }
 
     try {
-      const response = await fetch("/api/repo/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: repoName,
-          description,
-          visibility,
-          owner: userId,
-        }),
-      });
+      const response = await fetch(
+        "https://codium-backend.onrender.com/api/repo/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: repoName,
+            description,
+            visibility,
+            owner: userId,
+          }),
+        }
+      );
 
       const data = await response.json();
 

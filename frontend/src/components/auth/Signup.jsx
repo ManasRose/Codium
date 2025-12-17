@@ -22,11 +22,14 @@ const Signup = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post("/api/signup", {
-        email: email,
-        password: password,
-        username: username,
-      }); //Uses axios to send a POST request to our /api/signup endpoint, passing the email, password, and username from the state.
+      const res = await axios.post(
+        "https://codium-backend.onrender.com/api/signup",
+        {
+          email: email,
+          password: password,
+          username: username,
+        }
+      ); //Uses axios to send a POST request to our /api/signup endpoint, passing the email, password, and username from the state.
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.userId);

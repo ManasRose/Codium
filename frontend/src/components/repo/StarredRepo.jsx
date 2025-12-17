@@ -16,7 +16,9 @@ const StarredRepo = () => {
 
   const handleRepoClick = async (repoId) => {
     try {
-      const response = await fetch(`/api/repo/${repoId}/contents/`);
+      const response = await fetch(
+        `https://codium-backend.onrender.com/api/repo/${repoId}/contents/`
+      );
       const data = await response.json();
       if (
         response.ok &&
@@ -38,7 +40,9 @@ const StarredRepo = () => {
     const fetchStarredRepos = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/user/${currentUserId}/starred`);
+        const response = await fetch(
+          `https://codium-backend.onrender.com/api/user/${currentUserId}/starred`
+        );
         if (!response.ok)
           throw new Error("Failed to fetch starred repositories");
         const data = await response.json();

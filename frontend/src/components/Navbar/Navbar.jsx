@@ -34,7 +34,9 @@ const Navbar = () => {
     const fetchUserProfile = async () => {
       if (userId) {
         try {
-          const response = await fetch(`/api/userProfile/${userId}`);
+          const response = await fetch(
+            `https://codium-backend.onrender.com/api/userProfile/${userId}`
+          );
           const userData = await response.json();
           if (userData) {
             if (userData.profileImage) {
@@ -56,7 +58,9 @@ const Navbar = () => {
   useEffect(() => {
     const fetchAllRepositories = async () => {
       try {
-        const response = await fetch(`/api/repo/all`);
+        const response = await fetch(
+          `https://codium-backend.onrender.com/api/repo/all`
+        );
         const data = await response.json();
         setAllRepositories(data);
       } catch (err) {
@@ -102,7 +106,9 @@ const Navbar = () => {
 
     try {
       // Fetch repo details to find the latest commit ID
-      const response = await fetch(`/api/repo/${repoId}/contents/`);
+      const response = await fetch(
+        `https://codium-backend.onrender.com/api/repo/${repoId}/contents/`
+      );
       const data = await response.json();
 
       if (

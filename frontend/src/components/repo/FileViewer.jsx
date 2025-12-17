@@ -16,7 +16,7 @@ const FileViewer = () => {
     const fetchFileContent = async () => {
       try {
         const response = await axios.get(
-          `/api/repo/${repoId}/commit/${commitId}/file/${filePath}`
+          `https://codium-backend.onrender.com/api/repo/${repoId}/commit/${commitId}/file/${filePath}`
         );
 
         let content = response.data;

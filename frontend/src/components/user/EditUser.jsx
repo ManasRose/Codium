@@ -24,7 +24,9 @@ const EditProfile = () => {
         return;
       }
       try {
-        const response = await axios.get(`/api/userProfile/${userId}`);
+        const response = await axios.get(
+          `https://codium-backend.onrender.com/api/userProfile/${userId}`
+        );
         const userData = response.data;
         setUsername(userData.username || "");
         setDescription(userData.description || "");
@@ -61,11 +63,15 @@ const EditProfile = () => {
     }
 
     try {
-      await axios.put(`/api/updateProfile/${userId}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.put(
+        `https://codium-backend.onrender.com/api/updateProfile/${userId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       navigate("/profile");
     } catch (err) {
       setError(

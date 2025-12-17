@@ -54,7 +54,7 @@ const RepoPage = () => {
       setReadmeContent("");
       try {
         const response = await axios.get(
-          `/api/repo/${repoId}/contents/${currentPath}`
+          `https://codium-backend.onrender.com/api/repo/${repoId}/contents/${currentPath}`
         );
         const { repository, contents } = response.data;
         setRepoDetails(repository);
@@ -63,7 +63,7 @@ const RepoPage = () => {
 
         if (userId) {
           const starredResponse = await axios.get(
-            `/api/user/${userId}/starred`
+            `https://codium-backend.onrender.com/api/user/${userId}/starred`
           );
           const isRepoStarred = starredResponse.data.some(
             (repo) => repo._id === repoId
@@ -94,7 +94,7 @@ const RepoPage = () => {
     const fetchReadmeContent = async (readmePath, commitId) => {
       try {
         const readmeResponse = await axios.get(
-          `/api/repo/${repoId}/commit/${commitId}/file/${readmePath}`
+          `https://codium-backend.onrender.com/api/repo/${repoId}/commit/${commitId}/file/${readmePath}`
         );
         setReadmeContent(readmeResponse.data);
       } catch (err) {
@@ -110,9 +110,12 @@ const RepoPage = () => {
   const handleStarClick = async () => {
     if (!userId) return navigate("/auth");
     try {
-      const response = await axios.patch(`/api/repo/${repoId}/toggle-star`, {
-        userId,
-      });
+      const response = await axios.patch(
+        `https://codium-backend.onrender.com/api/repo/${repoId}/toggle-star`,
+        {
+          userId,
+        }
+      );
       setIsStarred(response.data.isStarred);
       setStarCount(response.data.starCount);
     } catch (error) {
@@ -183,7 +186,7 @@ const RepoPage = () => {
                   }
                 >
                   <a
-                    href={`/api/repo/${repoId}/commit/${latestCommit.commitId}/zip`}
+                    href={`https://codium-backend.onrender.com/api/repo/${repoId}/commit/${latestCommit.commitId}/zip`}
                     className="dropdown-item"
                     download={`${repoDetails.name}.zip`}
                   >

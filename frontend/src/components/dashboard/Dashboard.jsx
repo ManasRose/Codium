@@ -30,7 +30,9 @@ const Dashboard = () => {
 
   const handleRepoClick = async (repoId) => {
     try {
-      const response = await fetch(`/api/repo/${repoId}/contents/`);
+      const response = await fetch(
+        `https://codium-backend.onrender.com/api/repo/${repoId}/contents/`
+      );
       const data = await response.json();
       if (
         response.ok &&
@@ -56,7 +58,9 @@ const Dashboard = () => {
 
     const fetchMyRepositories = async () => {
       try {
-        const response = await fetch(`/api/repo/user/${userId}`);
+        const response = await fetch(
+          `https://codium-backend.onrender.com/api/repo/user/${userId}`
+        );
         const data = await response.json();
         setMyRepositories(data || []);
         setFilteredMyRepos(data || []);
@@ -68,7 +72,9 @@ const Dashboard = () => {
     const fetchRecentRepos = async () => {
       try {
         // Ensure your backend returns ALL recent repos, not just 5
-        const response = await fetch(`/api/repo/recent`);
+        const response = await fetch(
+          `https://codium-backend.onrender.com/api/repo/recent`
+        );
         const data = await response.json();
         setRecentRepos(data);
       } catch (err) {
@@ -78,7 +84,9 @@ const Dashboard = () => {
 
     const fetchStarredRepositories = async () => {
       try {
-        const response = await fetch(`/api/user/${userId}/starred`);
+        const response = await fetch(
+          `https://codium-backend.onrender.com/api/user/${userId}/starred`
+        );
         const data = await response.json();
         setStarredRepos(data);
       } catch (err) {

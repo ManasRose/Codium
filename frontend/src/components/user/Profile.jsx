@@ -24,7 +24,9 @@ const Profile = () => {
         return;
       }
       try {
-        const response = await axios.get(`/api/userProfile/${userId}`);
+        const response = await axios.get(
+          `https://codium-backend.onrender.com/api/userProfile/${userId}`
+        );
         setUserDetails(response.data);
       } catch (err) {
         console.error("Cannot fetch user details: ", err);

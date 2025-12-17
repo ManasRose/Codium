@@ -33,11 +33,15 @@ const FileUpload = ({ repoId, onUploadComplete }) => {
     formData.append("message", commitMessage);
 
     try {
-      await axios.post(`/api/repo/${repoId}/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        `https://codium-backend.onrender.com/api/repo/${repoId}/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       setFiles([]); // Clear files after successful upload
       onUploadComplete(); // Notify parent component to refresh
     } catch (err) {

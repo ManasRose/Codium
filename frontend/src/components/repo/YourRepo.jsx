@@ -14,7 +14,9 @@ const YourRepo = () => {
 
   const handleRepoClick = async (repoId) => {
     try {
-      const response = await fetch(`/api/repo/${repoId}/contents/`);
+      const response = await fetch(
+        `https://codium-backend.onrender.com/api/repo/${repoId}/contents/`
+      );
       const data = await response.json();
       if (
         response.ok &&
@@ -36,7 +38,9 @@ const YourRepo = () => {
     const fetchUserRepos = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/repo/user/${userID}`);
+        const response = await fetch(
+          `https://codium-backend.onrender.com/api/repo/user/${userID}`
+        );
         if (!response.ok) throw new Error("Failed to fetch repositories");
         const data = await response.json();
         setRepositories(data);

@@ -15,7 +15,9 @@ const Sidebar = ({ isOpen, onClose }) => {
   const handleRepoClick = async (repoId) => {
     onClose(); // Close the sidebar first
     try {
-      const response = await fetch(`/api/repo/${repoId}/contents/`);
+      const response = await fetch(
+        `https://codium-backend.onrender.com/api/repo/${repoId}/contents/`
+      );
       const data = await response.json();
       if (
         response.ok &&
@@ -40,7 +42,9 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       const fetchUserRepositories = async () => {
         try {
-          const response = await fetch(`/api/repo/user/${userId}`);
+          const response = await fetch(
+            `https://codium-backend.onrender.com/api/repo/user/${userId}`
+          );
           const data = await response.json();
           setUserRepositories(data || []);
         } catch (err) {
