@@ -26,10 +26,11 @@ const Signup = () => {
         email: email,
         password: password,
         username: username,
-      });
+      }); //Uses axios to send a POST request to our /api/signup endpoint, passing the email, password, and username from the state.
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.userId);
+      //After a successful response (res), it saves the token and userId into the browser's localStorage
 
       setCurrentUser(res.data.userId);
       setLoading(false);

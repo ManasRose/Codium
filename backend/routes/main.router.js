@@ -1,14 +1,14 @@
 const express = require("express");
+const mainRouter = express.Router();
+
 const userRouter = require("./user.router");
 const repoRouter = require("./repo.router");
-
-const mainRouter = express.Router();
 
 mainRouter.use(userRouter);
 mainRouter.use(repoRouter);
 
 mainRouter.get("/", (req, res) => {
-  res.send("Welcome!!");
+  res.send("Welcome to Codium API!");
 });
 
 module.exports = mainRouter;

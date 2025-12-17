@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
 import Navbar from "../Navbar/Navbar";
-import { VscRepo, VscLock, VscStarEmpty } from "react-icons/vsc";
+import { VscRepo } from "react-icons/vsc";
 import { FaPlus } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 
@@ -13,8 +13,20 @@ const Dashboard = () => {
   const [starredRepos, setStarredRepos] = useState([]);
   const [recentRepos, setRecentRepos] = useState([]);
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const reposPerPage = 5;
+
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
+
+  // Calculate Pagination Logic
+  const indexOfLastRepo = currentPage * reposPerPage;
+  const indexOfFirstRepo = indexOfLastRepo - reposPerPage;
+  const currentRepos = recentRepos.slice(indexOfFirstRepo, indexOfLastRepo);
+  const totalPages = Math.ceil(recentRepos.length / reposPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleRepoClick = async (repoId) => {
     try {
@@ -55,6 +67,7 @@ const Dashboard = () => {
 
     const fetchRecentRepos = async () => {
       try {
+        // Ensure your backend returns ALL recent repos, not just 5
         const response = await fetch(`/api/repo/recent`);
         const data = await response.json();
         setRecentRepos(data);
@@ -94,6 +107,7 @@ const Dashboard = () => {
     <>
       <Navbar />
       <div className="dashboard-container">
+        {/* Left Sidebar - Your Repositories */}
         <aside className="dashboard-sidebar left">
           <div className="repo-header">
             <h4>Your Repositories</h4>
@@ -129,11 +143,12 @@ const Dashboard = () => {
           </ul>
         </aside>
 
+        {/* Main Content - Recent Activity */}
         <main className="dashboard-main">
           <h2>Recent Activity</h2>
           <div className="activity-feed">
-            {recentRepos.length > 0 ? (
-              recentRepos.map(
+            {currentRepos.length > 0 ? (
+              currentRepos.map(
                 (repo) =>
                   repo.owner && (
                     <div key={repo._id} className="feed-item">
@@ -186,8 +201,43 @@ const Dashboard = () => {
               </div>
             )}
           </div>
+
+          {/* Pagination Controls */}
+          {recentRepos.length > reposPerPage && (
+            <div className="pagination">
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="pagination-btn"
+              >
+                Previous
+              </button>
+
+              {/* Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => paginate(i + 1)}
+                  className={`pagination-btn ${
+                    currentPage === i + 1 ? "active" : ""
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="pagination-btn"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </main>
 
+        {/* Right Sidebar - Starred Repositories */}
         <aside className="dashboard-sidebar right">
           <h4>Starred Repositories</h4>
           <ul className="explore-list">

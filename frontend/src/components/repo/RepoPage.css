@@ -1,4 +1,3 @@
-/* General Layout */
 .repo-page-container {
   max-width: 1280px;
   margin: 20px auto;
@@ -13,7 +12,7 @@
 
 .repo-main-content {
   flex: 1;
-  min-width: 0; /* Prevents flex items from overflowing */
+  min-width: 0;
 }
 
 .repo-sidebar {
@@ -28,7 +27,6 @@
   color: #8b949e;
 }
 
-/* Header Section */
 .repo-page-header {
   margin-bottom: 24px;
 }
@@ -70,7 +68,6 @@
   display: flex;
   gap: 8px;
 }
-/* Add this to your RepoPage.css file */
 .star-count {
   background-color: #30363d;
   border: 1px solid #6e7681;
@@ -81,25 +78,23 @@
   line-height: 18px;
   margin-left: 6px;
 }
-/* Add this to the end of your RepoPage.css file */
 .code-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px; /* Space between text and caret icon */
+  gap: 4px;
 }
 
-/* This targets the dropdown item within the repo actions header */
 .repo-actions .dropdown-item {
   display: flex;
   align-items: center;
-  gap: 8px; /* Space between download icon and text */
+  gap: 8px;
 }
 
 .empty-repo-container {
   text-align: center;
   padding: 48px;
   border: 1px solid #30363d;
-  border-top: none; /* The header already has a bottom border */
+  border-top: none;
   border-radius: 0 0 6px 6px;
   color: #8b949e;
 }
@@ -122,7 +117,6 @@
   cursor: pointer;
 }
 
-/* Repo Navigation Tabs */
 .repo-nav-tabs {
   border-bottom: 1px solid #30363d;
 }
@@ -147,7 +141,6 @@
   border-radius: 6px 6px 0 0;
 }
 
-/* File Browser */
 .file-browser {
   border: 1px solid #30363d;
   border-radius: 6px;
@@ -186,7 +179,6 @@
   margin: 0;
 }
 
-/* File List (Table) */
 .file-list-row {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) minmax(0, 1fr);
@@ -249,7 +241,6 @@
   font-weight: bold;
 }
 
-/* README Section */
 .readme-container {
   border: 1px solid #30363d;
   border-radius: 6px;
@@ -268,7 +259,6 @@
   line-height: 1.6;
 }
 
-/* Styles for rendered markdown content */
 .markdown-body h1,
 .markdown-body h2 {
   border-bottom: 1px solid #30363d;
@@ -309,7 +299,6 @@
   background-color: #161b22;
 }
 
-/* Sidebar */
 .sidebar-section {
   margin-bottom: 24px;
 }
@@ -334,7 +323,6 @@
   gap: 8px;
 }
 
-/* Language Stats Placeholder */
 .language-bar {
   display: flex;
   height: 8px;

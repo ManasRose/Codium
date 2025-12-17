@@ -42,7 +42,6 @@ const Sidebar = ({ isOpen, onClose }) => {
         try {
           const response = await fetch(`/api/repo/user/${userId}`);
           const data = await response.json();
-          // 4. CORRECTED: Use the data directly, not data.repositories
           setUserRepositories(data || []);
         } catch (err) {
           console.error("Error fetching user repositories for sidebar: ", err);
@@ -97,7 +96,6 @@ const Sidebar = ({ isOpen, onClose }) => {
           </div>
 
           <ul className="sidebar-repo-list">
-            {/* 5. CORRECTED: Render list with onClick and corrected avatar source */}
             {filteredRepositories.map((repo) => (
               <li
                 key={repo._id}

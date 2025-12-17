@@ -7,14 +7,15 @@ import Profile from "./components/user/Profile.jsx";
 import Login from "./components/auth/Login.jsx";
 import Signup from "./components/auth/Signup.jsx";
 import NewRepo from "./components/repo/NewRepo.jsx";
-import UnderDev from "./UnderDev.jsx";
+import UnderDev from "./components/underdev/UnderDev.jsx";
 import EditUser from "./components/user/EditUser.jsx";
 import RepoPage from "./components/repo/RepoPage.jsx";
 import FileViewer from "./components/repo/FileViewer.jsx";
+import YourRepo from "./components/repo/YourRepo.jsx";
 
 //Auth context
 import { useAuth } from "./AuthContext.jsx";
-import YourRepo from "./components/repo/YourRepo.jsx";
+import StarredRepo from "./components/repo/StarredRepo.jsx";
 
 const ProjectRoutes = () => {
   const { currentUser, setCurrentUser } = useAuth();
@@ -59,6 +60,10 @@ const ProjectRoutes = () => {
     {
       path: "/repo/user/:userID",
       element: <YourRepo />,
+    },
+    {
+      path: "/repo/starred",
+      element: <StarredRepo />,
     },
     {
       path: "/repo/create",

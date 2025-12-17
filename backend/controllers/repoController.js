@@ -1,19 +1,16 @@
 const mongoose = require("mongoose");
 const Repository = require("../models/repoModel");
 const User = require("../models/userModel");
-const { s3, S3_BUCKET } = require("../config/aws-config"); // This now imports your v3 client
+const { s3, S3_BUCKET } = require("../config/aws-config");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const archiver = require("archiver");
 
-// V3 UPDATE: Import the specific commands you will use from the AWS SDK v3.
 const {
   PutObjectCommand,
   ListObjectsV2Command,
   GetObjectCommand,
 } = require("@aws-sdk/client-s3");
-
-// --- No changes needed in the functions below this line ---
 
 const createRepository = async (req, res) => {
   const { owner, name, description, visibility } = req.body;
@@ -22,6 +19,7 @@ const createRepository = async (req, res) => {
       return res.status(400).json({ error: "Repository Name is Required" });
     }
     if (!mongoose.Types.ObjectId.isValid(owner)) {
+      // Validate owner ID from request body through mongoose
       return res.status(400).json({ error: "Invalid User Id" });
     }
     const newRepository = new Repository({
@@ -149,7 +147,6 @@ const getRecentRepositories = async (req, res) => {
   try {
     const recentRepos = await Repository.find({ visibility: true })
       .sort({ createdAt: -1 })
-      .limit(5)
       .populate("owner");
     res.json(recentRepos);
   } catch (error) {
@@ -157,8 +154,6 @@ const getRecentRepositories = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-
-// --- Changes start in the functions below ---
 
 const getRepoContents = async (req, res) => {
   const repoId = req.params[0];
@@ -184,8 +179,6 @@ const getRepoContents = async (req, res) => {
       Prefix: s3Prefix,
       Delimiter: "/",
     };
-
-    // V3 UPDATE: Use the new "send" pattern with the imported command.
     const s3Data = await s3.send(new ListObjectsV2Command(params));
 
     const folders = (s3Data.CommonPrefixes || []).map((prefix) => ({
@@ -221,10 +214,7 @@ const getRepoFileContent = async (req, res) => {
       Bucket: S3_BUCKET,
       Key: s3Key,
     };
-    // V3 UPDATE: Use the "send" pattern and await the response.
     const s3Object = await s3.send(new GetObjectCommand(params));
-
-    // V3 UPDATE: The Body is a stream. We transform it to a string.
     const bodyContents = await s3Object.Body.transformToString("utf-8");
 
     res.header("Content-Type", "text/plain");
@@ -255,8 +245,6 @@ const uploadFilesToRepo = async (req, res) => {
     }
 
     const newCommitId = uuidv4();
-
-    // V3 UPDATE: We now use PutObjectCommand instead of the old s3.upload helper.
     const uploadPromises = files.map((file) => {
       const s3Key = `${repoId}/commits/${newCommitId}/${file.originalname}`;
       const params = {
@@ -309,15 +297,12 @@ const downloadRepoAsZip = async (req, res) => {
     archive.pipe(res);
 
     const listParams = { Bucket: S3_BUCKET, Prefix: s3Prefix };
-    // V3 UPDATE: Use the new "send" pattern here as well.
     const listedObjects = await s3.send(new ListObjectsV2Command(listParams));
 
     if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
       archive.finalize();
       return;
     }
-
-    // V3 UPDATE: The logic to get and stream files is slightly different.
     for (const file of listedObjects.Contents) {
       // Get the object from S3. The Body will be a readable stream.
       const s3Object = await s3.send(

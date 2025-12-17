@@ -2,15 +2,19 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 
+// 1. SIGNUP
 const signup = async (req, res) => {
   const { username, password, email } = req.body;
   try {
-    const existingUser = await User.findOne({ email });
+    // Check if email OR username already exists
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }],
+    });
+
     if (existingUser) {
-      // Use JSON for all responses
       return res
         .status(400)
-        .json({ error: "User with this email already exists" });
+        .json({ error: "User with this email or username already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -20,6 +24,9 @@ const signup = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      // Ensure a default profile image is set if you want consistency
+      profileImage:
+        "https://res.cloudinary.com/dy9ojg45y/image/upload/v1758641478/profile-default-svgrepo-com_d0eeud.svg",
     });
 
     const savedUser = await newUser.save();
@@ -27,15 +34,13 @@ const signup = async (req, res) => {
     const token = jwt.sign(
       { userId: savedUser._id },
       process.env.JWT_SECRET_KEY,
-      {
-        expiresIn: "1h",
-      }
+      { expiresIn: "1h" }
     );
 
     res.status(201).json({
       message: "User created successfully",
       token,
-      userId: savedUser._id,
+      userId: savedUser._id, // Sending userId is crucial
     });
   } catch (error) {
     console.error("Signup Error:", error);
@@ -43,30 +48,48 @@ const signup = async (req, res) => {
   }
 };
 
+// 2. LOGIN
 const login = async (req, res) => {
-  const { username, password } = req.body;
+  // Frontend might send 'email' or 'username' in the body
+  const { email, username, password } = req.body;
+
   try {
-    const user = await User.findOne({ username });
+    let user;
+
+    if (email) {
+      user = await User.findOne({ email });
+    } else if (username) {
+      user = await User.findOne({ username });
+    } else {
+      const loginIdentifier = email || username;
+      if (loginIdentifier) {
+        user = await User.findOne({
+          $or: [{ email: loginIdentifier }, { username: loginIdentifier }],
+        });
+      }
+    }
+
     if (!user) {
-      return res.status(401).json({ error: "Invalid username or password" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ error: "Invalid username or password" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "1h",
     });
 
-    res.json({ token });
+    res.json({ token, userId: user._id });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ error: "An internal server error occurred" });
   }
 };
 
+// 3. GET USER PROFILE
 const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -81,6 +104,7 @@ const getUserProfile = async (req, res) => {
   }
 };
 
+// 4. UPDATE PROFILE
 const updateUserProfile = async (req, res) => {
   const userId = req.params.id;
   const { username, password, description } = req.body;

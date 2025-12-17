@@ -1,12 +1,9 @@
-/* ==========================================================================
-   Main Page Container
-   ========================================================================== */
 .under-dev-container {
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  min-height: calc(100vh - 70px); /* Full height minus the navbar */
+  min-height: calc(100vh - 70px);
   color: #c9d1d9;
   background-color: #0d1117;
   padding: 24px;
@@ -16,12 +13,9 @@
   max-width: 500px;
 }
 
-/* ==========================================================================
-   Content Styles
-   ========================================================================== */
 .under-dev-icon {
   font-size: 64px;
-  color: #58a6ff; /* A nice accent blue */
+  color: #58a6ff;
   margin-bottom: 24px;
 }
 

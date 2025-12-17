@@ -3,23 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import "./navbar.css";
 
 // Import the necessary icons
-import {
-  FaGithub,
-  FaBars,
-  FaSearch,
-  FaPlus,
-  FaCaretDown,
-  FaNpm,
-} from "react-icons/fa";
+import { FaBars, FaSearch, FaPlus, FaCaretDown, FaNpm } from "react-icons/fa";
 import { VscRepo, VscInbox, VscGitPullRequest } from "react-icons/vsc";
 import Sidebar from "./Sidebar";
 import Dropdown from "./Dropdown";
+import codiumLogo from "../../assets/github-mark-white.svg";
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-  // --- State for search functionality ---
+  //State for search functionality
   const [searchQuery, setSearchQuery] = useState("");
   const [allRepositories, setAllRepositories] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
@@ -27,7 +21,7 @@ const Navbar = () => {
   const searchWrapperRef = useRef(null);
   const navigate = useNavigate();
 
-  // --- State to hold dynamic user data ---
+  //State to hold dynamic user data
   const [userProfilePic, setUserProfilePic] = useState(
     "https://res.cloudinary.com/dy9ojg45y/image/upload/v1758641478/profile-default-svgrepo-com_d0eeud.svg"
   );
@@ -35,12 +29,11 @@ const Navbar = () => {
 
   const userId = localStorage.getItem("userId");
 
-  // --- Fetch user's profile data to get the image URL and username ---
+  //Fetch user's profile data to get the image URL and username
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (userId) {
         try {
-          // Assuming Vite proxy is configured for /api
           const response = await fetch(`/api/userProfile/${userId}`);
           const userData = await response.json();
           if (userData) {
@@ -59,7 +52,7 @@ const Navbar = () => {
     fetchUserProfile();
   }, [userId]);
 
-  // --- Fetch all repositories when the component mounts ---
+  //Fetch all repositories when the component mounts
   useEffect(() => {
     const fetchAllRepositories = async () => {
       try {
@@ -71,9 +64,9 @@ const Navbar = () => {
       }
     };
     fetchAllRepositories();
-  }, []);
+  }, []); //This is an efficient "cache"
 
-  // --- Filter repositories based on the search query ---
+  //Filter repositories based on the search query
   useEffect(() => {
     if (searchQuery.trim() !== "") {
       const filtered = allRepositories.filter((repo) =>
@@ -85,7 +78,7 @@ const Navbar = () => {
     }
   }, [searchQuery, allRepositories]);
 
-  // --- Handle clicks outside the search to close the dropdown ---
+  //Handle clicks outside the search to close the dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -101,7 +94,7 @@ const Navbar = () => {
     };
   }, []);
 
-  // --- CORRECTED: Function to handle clicking a search result ---
+  //Function to handle clicking a search result
   const handleResultClick = async (repoId) => {
     setSearchQuery("");
     setSearchResults([]);
@@ -148,14 +141,17 @@ const Navbar = () => {
             </button>
           </div>
           <Link to="/" className="navbar-logo">
-            <FaGithub size={32} />
+            <img
+              src={codiumLogo}
+              alt="Codium Logo"
+              className="navbar-logo-img"
+            />
           </Link>
           <Link to="/" className="navbar-title-link">
             <span className="navbar-title">Dashboard</span>
           </Link>
         </div>
 
-        {/* --- NEW CENTER SECTION --- */}
         <div className="navbar-center">
           <a
             href="https://www.npmjs.com/package/@manasrose/codium?activeTab=readme"
@@ -247,11 +243,10 @@ const Navbar = () => {
             <Link to="/profile" className="dropdown-item">
               Your profile
             </Link>
-            {/* --- CORRECTED: This link now points to the correct user repo page --- */}
             <Link to={`/repo/user/${userId}`} className="dropdown-item">
               Your repositories
             </Link>
-            <Link to="/profile/stars" className="dropdown-item">
+            <Link to="/repo/starred" className="dropdown-item">
               Your stars
             </Link>
             <div className="dropdown-divider"></div>

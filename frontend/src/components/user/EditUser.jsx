@@ -3,14 +3,15 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./EditProfile.css";
 import Navbar from "../Navbar/Navbar";
+import { FaCamera } from "react-icons/fa";
 
 const EditProfile = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [description, setDescription] = useState("");
   const [profileImage, setProfileImage] = useState(null);
-  // Initialize with null instead of an empty string
   const [previewImage, setPreviewImage] = useState(null);
+  const [fileName, setFileName] = useState("No file chosen");
 
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const EditProfile = () => {
         const userData = response.data;
         setUsername(userData.username || "");
         setDescription(userData.description || "");
-        setPreviewImage(userData.profileImage || null); // Set to null if no image exists
+        setPreviewImage(userData.profileImage || null);
       } catch (err) {
         console.error("Failed to fetch user data:", err);
       }
@@ -38,6 +39,7 @@ const EditProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setFileName(file.name);
       setProfileImage(file);
       setPreviewImage(URL.createObjectURL(file));
     }
@@ -103,24 +105,40 @@ const EditProfile = () => {
             />
           </div>
 
-          <div className="form-group image-upload-group">
-            {/* --- THIS IS THE KEY CHANGE --- */}
-            {/* Only render the image tag if previewImage has a value */}
-            {previewImage && (
-              <img
-                src={previewImage}
-                alt="Profile Preview"
-                className="profile-preview"
-              />
-            )}
-            <div>
-              <label htmlFor="profileImage">Profile Picture</label>
-              <input
-                type="file"
-                id="profileImage"
-                accept="image/png, image/jpeg, image/jpg"
-                onChange={handleImageChange}
-              />
+          <div className="form-group">
+            <label className="label">Profile Picture</label>
+
+            <div className="image-upload-wrapper">
+              {/* Image Preview Area */}
+              <div className="preview-container">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Profile Preview"
+                    className="profile-preview"
+                  />
+                ) : (
+                  <div className="profile-placeholder"></div>
+                )}
+              </div>
+
+              {/* Styled File Input */}
+              <div className="file-input-container">
+                <input
+                  type="file"
+                  id="profileImage"
+                  className="hidden-file-input"
+                  accept="image/png, image/jpeg, image/jpg"
+                  onChange={handleImageChange}
+                />
+
+                <label htmlFor="profileImage" className="styled-file-button">
+                  <FaCamera style={{ marginRight: "8px" }} />
+                  Upload new picture
+                </label>
+
+                <span className="file-name-display">{fileName}</span>
+              </div>
             </div>
           </div>
 

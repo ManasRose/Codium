@@ -1,7 +1,3 @@
-/* ==========================================================================
-   Base Navbar Styles
-   ========================================================================== */
-
 .navbar-container {
   display: flex;
   align-items: center;
@@ -21,6 +17,11 @@
 
 .navbar-logo {
   color: #ffffff;
+}
+.navbar-logo-img {
+  width: 32px;
+  height: auto;
+  display: block;
 }
 
 .navbar-title {
@@ -114,15 +115,11 @@
   cursor: pointer;
 }
 
-/* --- NEW STYLES START HERE --- */
-
-/* Container for the center items */
 .navbar-center {
   display: flex;
   align-items: center;
 }
 
-/* Style for the link to the npm package */
 .navbar-npm-link {
   display: flex;
   align-items: center;
@@ -140,12 +137,6 @@
   background-color: #20242a;
   color: #c9d1d9;
 }
-
-/* --- NEW STYLES END HERE --- */
-
-/* ==========================================================================
-   Dropdown Menu Styles
-   ========================================================================== */
 
 .dropdown-container {
   position: relative;
@@ -197,10 +188,6 @@
   margin: 4px 0;
 }
 
-/* ==========================================================================
-   Tooltip Styles (Appearing Below)
-   ========================================================================== */
-
 .tooltip-container {
   position: relative;
   display: flex;
@@ -231,10 +218,6 @@
   transform: translateX(-50%) translateY(0);
   pointer-events: auto;
 }
-
-/* ==========================================================================
-   Navbar Search Dropdown Styles
-   ========================================================================== */
 
 .search-wrapper {
   position: relative;
@@ -271,10 +254,6 @@
   color: #ffffff;
 }
 
-/* ==========================================================================
-   Responsive Styles
-   ========================================================================== */
-
 @media (max-width: 1012px) {
   .navbar-title-link {
     display: none;
@@ -298,7 +277,6 @@
   .search-wrapper,
   .navbar-actions,
   .navbar-center {
-    /* Hide the npm link on the smallest screens */
     display: none;
   }
   .navbar-right {

@@ -4,7 +4,6 @@
   padding: 0 24px;
 }
 
-/* Header with "New" button */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -22,7 +21,6 @@
   border: none;
 }
 
-/* Filter input field */
 .filter-input {
   width: 100%;
   padding: 8px 12px;
@@ -34,13 +32,11 @@
   margin-bottom: 24px;
 }
 
-/* Main list styling */
 .repo-list-container ul {
   list-style: none;
   padding: 0;
 }
 
-/* Each repository item */
 .repo-item {
   display: flex;
   justify-content: space-between;
@@ -75,7 +71,6 @@
   text-decoration: underline;
 }
 
-/* Public/Private badge */
 .visibility-badge {
   font-size: 12px;
   font-weight: 500;
@@ -92,7 +87,6 @@
   margin: 0;
 }
 
-/* Right-side metadata (timestamp) */
 .repo-meta {
   font-size: 14px;
   color: #8b949e;
@@ -100,7 +94,6 @@
   margin-left: 16px;
 }
 
-/* Empty state message */
 .no-repos-found {
   text-align: center;
   padding: 48px;

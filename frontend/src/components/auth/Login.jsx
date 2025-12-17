@@ -10,13 +10,7 @@ import logo from "../../assets/github-mark-white.svg";
 import { Link } from "react-router-dom";
 
 const Login = () => {
-  // useEffect(() => {
-  //   localStorage.removeItem("token");
-  //   localStorage.removeItem("userId");
-  //   setCurrentUser(null);
-  // });
-
-  const [email, setEmail] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { setCurrentUser } = useAuth();
@@ -26,10 +20,18 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post("/api/login", {
-        email: email,
+
+      // Determine if the input is an email or a username
+      // This ensures we send the correct key to your backend
+      const isEmail = emailOrUsername.includes("@");
+      const requestBody = {
         password: password,
-      });
+        ...(isEmail
+          ? { email: emailOrUsername }
+          : { username: emailOrUsername }),
+      };
+
+      const res = await axios.post("/api/login", requestBody);
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userId", res.data.userId);
@@ -59,15 +61,15 @@ const Login = () => {
         </div>
         <div className="login-box">
           <div>
-            <label className="label">Email address</label>
+            <label className="label">Email address or Username</label>
             <input
               autoComplete="off"
-              name="Email"
-              id="Email"
+              name="EmailOrUsername"
+              id="EmailOrUsername"
               className="input"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text" // Changed from "email" to "text" to allow usernames
+              value={emailOrUsername}
+              onChange={(e) => setEmailOrUsername(e.target.value)}
             />
           </div>
           <div className="div">

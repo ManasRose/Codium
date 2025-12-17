@@ -9,8 +9,8 @@ const loginUser = async () => {
     // 1. Prompt the user for their credentials
     const credentials = await inquirer.default.prompt([
       {
-        name: "username",
-        message: "Enter your username:",
+        name: "loginIdentifier", // Changed from 'username' to be more accurate
+        message: "Enter your username or email:", // Updated message
         type: "input",
       },
       {
@@ -24,22 +24,32 @@ const loginUser = async () => {
 
     console.log("Attempting to log in...");
 
-    // 2. Send credentials to your backend's login endpoint
-    const response = await axios.post(`${API_BASE_URL}/login`, {
-      username: credentials.username,
+    // 2. Prepare the payload based on input type
+    // If the input contains '@', we treat it as an email. Otherwise, a username.
+    const isEmail = credentials.loginIdentifier.includes("@");
+
+    const loginPayload = {
       password: credentials.password,
-    });
+      ...(isEmail
+        ? { email: credentials.loginIdentifier }
+        : { username: credentials.loginIdentifier }),
+    };
+
+    // 3. Send credentials to your backend's login endpoint
+    const response = await axios.post(`${API_BASE_URL}/login`, loginPayload);
 
     const { token } = response.data;
+
     if (!token) {
       throw new Error("Login failed, no token received.");
     }
 
-    // 3. Save the token to a global config file in the user's home directory
-    const configPath = path.join(os.homedir(), ".codiumrc"); //rc is just standard naming convention for cli config files
+    // 4. Save the token to a global config file in the user's home directory
+    const configPath = path.join(os.homedir(), ".codiumrc");
     const configData = { token };
 
-    await fs.writeFile(configPath, JSON.stringify(configData, null, 2)); //save the token into the .codiumrc file in JSON format
+    // Save the token into the .codiumrc file in JSON format
+    await fs.writeFile(configPath, JSON.stringify(configData, null, 2));
 
     console.log("\n✅ Successfully logged in!");
     console.log(`Authentication token saved to ${configPath}`);
@@ -47,7 +57,12 @@ const loginUser = async () => {
     console.error("\n❌ Login failed.");
     if (error.response) {
       // The server responded with an error status code (e.g., 401, 500)
-      console.error(`API Error: ${error.response.data.error}`);
+      // Safely access the error message
+      const errMsg =
+        error.response.data.error ||
+        error.response.data.message ||
+        "Unknown API Error";
+      console.error(`API Error: ${errMsg}`);
     } else if (error.request) {
       // The request was made but no response was received (server is not running)
       console.error(

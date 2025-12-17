@@ -1,7 +1,6 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import "./UnderDev.css"; // We will create this file next
-import Navbar from "./components/Navbar/Navbar"; // Adjust path if necessary
+import Navbar from "../Navbar/Navbar"; // Adjust path if necessary
 import { FaTools } from "react-icons/fa"; // Using a "tools" icon for construction
 
 const UnderDev = () => {

@@ -46,13 +46,11 @@ const Profile = () => {
     <>
       <Navbar />
       <div className="profile-page-container">
-        {/* Top navigation tabs for the profile section */}
         <div className="profile-nav-container">
           <UnderlineNav aria-label="Profile sections">
             <UnderlineNav.Item aria-current="page" icon={BookIcon}>
               Overview
             </UnderlineNav.Item>
-            {/* CORRECTED: Navigates to the correct frontend page route */}
             <UnderlineNav.Item
               icon={RepoIcon}
               onClick={() => navigate(`/repo/user/${userDetails._id}`)}
@@ -61,7 +59,7 @@ const Profile = () => {
             </UnderlineNav.Item>
             <UnderlineNav.Item
               icon={StarIcon}
-              onClick={() => navigate("/stars")}
+              onClick={() => navigate("/repo/starred")}
             >
               Stars
             </UnderlineNav.Item>
@@ -69,9 +67,7 @@ const Profile = () => {
         </div>
 
         <div className="profile-body-container">
-          {/* Left Sidebar for User Info */}
           <aside className="profile-sidebar">
-            {/* CORRECTED: Image is now dynamic with a fallback to your default */}
             <img
               src={
                 userDetails.profileImage
@@ -83,7 +79,6 @@ const Profile = () => {
             />
             <h1 className="profile-name">{userDetails.username}</h1>
 
-            {/* CORRECTED: This is now a Link to the edit page */}
             <Link
               to={`/updateProfile/${userDetails._id}`}
               className="edit-profile-btn"
