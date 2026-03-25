@@ -14,6 +14,7 @@ const port = process.env.PORT || 5000; // A standard port for APIs
 const allowedOrigins = [
   "http://localhost:5173", // For local development
   "https://main.d293vwejwkqvcf.amplifyapp.com",
+  "https://codium-frontend.onrender.com",
   // You can add more URLs here if needed
 ];
 
@@ -32,7 +33,7 @@ app.use(
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
-  })
+  }),
 );
 
 app.use(bodyParser.json());
